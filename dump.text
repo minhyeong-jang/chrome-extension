@@ -1,0 +1,132 @@
+
+    <div class="content">
+      <h3 clsss="title">Alarm</h3>
+      <ul>
+        <li>
+          <span>Coinnest</span>
+          <div class="checkbox">
+            <input id="coinnestAlarm" class="radio-alram" type="checkbox" value="coinnest">
+            <label></label>
+          </div>
+        </li>
+        <li>
+          <span>Upbit</span>
+          <div class="checkbox">
+            <input id="upbitAlarm" class="radio-alram" type="checkbox" value="upbit">
+            <label></label>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="content">
+      <h3 clsss="title">Exchange</h3>
+      <ul>
+        <li>
+          Not supported
+        </li>
+        <li>
+          <span>Buy Level</span>
+          <input type="number" placeholder="only number">
+          <button id="buyCoin" type="button">Buy</button>
+        </li>
+        <li>
+          <span>Sell Level</span>
+          <input type="number" placeholder="only number">
+          <button id="sellCoin" type="button" onclick="sellCoin();">Sell</button>
+        </li>
+        <li>
+          <span>Completely complete</span>
+          <input id="completeCheck" type="checkbox">
+        </li>
+      </ul>
+    </div>
+
+
+"browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "index.html",
+    "default_title": "Fast Exchange"
+  },
+  
+
+
+
+    
+let alrams = {};
+let scrap = false;
+
+chrome.storage.sync.get('alrams', function(items){
+  // 알람 상태가 이미 저장되어 있는 경우
+	if( items.alrams )
+    alrams = items.alrams;
+  
+  // 체크박스 활성화
+	let list = ['upbit', 'coinnest'];
+  list.forEach( function(item){
+		if( !alrams || alrams[item] !== 'off' ){
+      alrams[item] = 'on';
+			$(`#${item}Alarm`).attr('checked', true);
+		}
+		else {
+			alrams[item] = 'off';
+			$(`#${item}Alarm`).attr('checked', false);
+		}
+  });
+  
+  // 알람 초기 설정 저장
+  chrome.storage.sync.set({alrams: alrams}, function(){ });
+
+  // scrapExchange();
+});
+
+/**
+ * 알람 상태 변경 이벤트
+ * 2018-03-16
+ */
+$('.radio-alram').on('change', function() {
+	if($(this).prop('checked'))
+    alrams[$(this).val()] = 'on';
+	else 
+    alrams[$(this).val()] = 'off';
+
+  chrome.storage.sync.set({alrams: alrams}, function() { });
+
+  soundManager.onready(function() {
+    soundManager.createSound({
+      id: 'mySound',
+      url: '/doorbell.wav'
+    });
+
+    // ...and play it
+    soundManager.play('mySound');
+  });
+
+  function modifyDOM() {
+    //You can play with your DOM here or check URL against your regex
+    console.log('Tab script:');
+    console.log(document.body);
+    return document.body.innerHTML;
+  }
+
+  //We have permission to access the activeTab, so we can call chrome.tabs.executeScript:
+  chrome.tabs.executeScript({
+      code: '(' + modifyDOM + ')();' //argument here is a string but function.toString() returns function's code
+  }, (results) => {
+      //Here we have just the innerHTML and not DOM structure
+      console.log('Popup script:')
+      console.log($(results[0]));
+  });
+  let json_date = {
+    address: '플레이오토',
+    key: 'AIzaSyDDVqnsmm7TCLXzGSQhQPbADOi5NOGmuNo',
+  }
+  lib.ajaxSubmit('https://maps.googleapis.com/maps/api/geocode/json', 'GET', json_data, function(status, message){
+    console.log(status, message);
+  });
+});
+
+function scrapExchange() {
+  while(true){
+
+  }
+}
