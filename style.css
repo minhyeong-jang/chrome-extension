@@ -6,8 +6,8 @@ a{text-decoration:none;color:inherit}
 .collapse{display:none}.collapse.in{display:block}tr.collapse.in{display:table-row}tbody.collapse.in{display:table-row-group}.collapsing{position:relative;height:0;overflow:hidden;-webkit-transition-timing-function:ease;-o-transition-timing-function:ease;transition-timing-function:ease;-webkit-transition-duration:.35s;-o-transition-duration:.35s;transition-duration:.35s;-webkit-transition-property:height,visibility;-o-transition-property:height,visibility;transition-property:height,visibility}
 
 body {
-  width: 200px;
-  background-color: #eee;
+  width: 250px;
+  background-color: #fff;
   padding: 0px;
   margin: 0px;
 }
@@ -15,6 +15,27 @@ body {
   padding: 20px 15px;
   border-bottom: 1px solid #ccc;
 }
+.content h3 {
+  font-size: 15px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+}
+.content input {
+  border: 1px solid #dedede;
+  padding: 7px;
+  border-radius: 4px;
+}
+.content button {
+  display: inline-block;
+  text-align: center;
+  padding: 7px 12px;
+  border: 1px solid #dedede;
+  background-color: #191919;
+  color: white;
+  border-radius: 4px;
+  margin-left: 3px;
+}
+
 .content .panel {
   margin-top: 10px;
 }
@@ -43,16 +64,6 @@ body {
   width: 25px;
   margin: 0px 20px;
 }
-
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #0077B5;
-  color: white;
-  border-radius: 3px;
-  margin-top: 10px;
-}
-
 
 /* Checkbox */
 .checkbox {
