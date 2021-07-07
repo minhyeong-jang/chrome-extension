@@ -39,14 +39,15 @@ const getVaccine = () => {
     (data) => {
       if (data.status === "OK") {
         if (keywordItems[keyword]) return;
+        const loadingKeyword = btoa(
+          unescape(encodeURIComponent(keyword))
+        ).replace(/[^a-zA-Z]/g, "");
 
         const location = data.results[0].geometry.location;
         const list = $(".vaccine-list");
         const content = $("<li>").appendTo(list);
         $(
-          `<a data-toggle="collapse" href="#collapse-${collapseCount}">${keyword} 주변 확인 중<div class="loading-position loading-${btoa(
-            unescape(encodeURIComponent(keyword))
-          )} active"></div></a>`
+          `<a data-toggle="collapse" href="#collapse-${collapseCount}">${keyword} 주변 확인 중<div class="loading-position loading-${loadingKeyword} active"></div></a>`
         ).appendTo(content);
         const collapseItem = $(
           `<div id="collapse-${collapseCount}" class="panel collapse" role="tabpanel">`
@@ -62,9 +63,7 @@ const getVaccine = () => {
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.onload = () => {
             if (xhr.status === 200 || xhr.status === 201) {
-              $(
-                `.loading-${btoa(unescape(encodeURIComponent(keyword)))}`
-              ).toggleClass("active");
+              $(`.loading-${loadingKeyword}`).toggleClass("active");
 
               JSON.parse(xhr.responseText).organizations.map((item) => {
                 if (!keywordItems[keyword]) {
