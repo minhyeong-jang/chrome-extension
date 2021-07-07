@@ -1,5 +1,5 @@
 /**
- * 검색버튼 클릭
+ * 검색 버튼 클릭
  */
 $("#position").keypress(function (e) {
   if (e.which == 13) {
@@ -11,9 +11,12 @@ $("button.search").on("click", () => {
 });
 
 /**
- * 날씨 정보
+ * 백신 정보
  */
-var getVaccine = () => {
+let keywordItems = {};
+let collapseCount = 0;
+
+const getVaccine = () => {
   const keyword = $("#position").val();
   // 데이터를 전달받아 GET 전송
   let data = {
@@ -29,14 +32,21 @@ var getVaccine = () => {
     "",
     (data) => {
       if (data.status === "OK") {
+        if (keywordItems[keyword]) return;
+
         const location = data.results[0].geometry.location;
+        const list = $(".vaccine-list");
+        const content = $("<li>").appendTo(list);
+        $(
+          `<a data-toggle="collapse" href="#collapse-${collapseCount}">${keyword} 주변 확인 중..</a>`
+        ).appendTo(content);
+        const collapseItem = $(
+          `<div id="collapse-${collapseCount}" class="panel collapse" role="tabpanel">`
+        ).appendTo(content);
 
-        let list = $("<ul>").appendTo(".vaccine-list");
-        let content = $("<li>").appendTo(list);
+        collapseCount++;
 
-        $(`<div>${keyword}</div>`).appendTo(content);
-
-        const interval = setInterval(() => {
+        setInterval(() => {
           var xhr = new XMLHttpRequest();
           xhr.open(
             "POST",
@@ -44,13 +54,18 @@ var getVaccine = () => {
             true
           );
           xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.onload = function () {
+          xhr.onload = () => {
             if (xhr.status === 200 || xhr.status === 201) {
-              console.log(`${keyword} 검색어 주변 확인 중..`);
               JSON.parse(xhr.responseText).organizations.map((item) => {
+                console.log(keywordItems[keyword]);
+                if (!keywordItems[keyword]) {
+                  $(
+                    `<div class="org-item"><div class="org-name">${item.orgName}</div><div class="address">${item.address}</div></div>`
+                  ).appendTo(collapseItem);
+                }
                 if (item.leftCounts) {
                   console.log(
-                    `interval : https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`
+                    `interval ${keyword} : https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`
                   );
                   soundManager.onready(() => {
                     soundManager.createSound({
@@ -65,16 +80,17 @@ var getVaccine = () => {
                   );
                 }
               });
+              keywordItems[keyword] = true;
             } else {
               console.error(xhr.responseText);
             }
           };
           xhr.send(
             JSON.stringify({
-              bottomRight: { x: location.lng - 0.03, y: location.lat + 0.3 },
+              bottomRight: { x: location.lng - 0.01, y: location.lat + 0.02 },
               onlyLeft: false,
               order: "latitude",
-              topLeft: { x: location.lng + 0.03, y: location.lat - 0.3 },
+              topLeft: { x: location.lng + 0.01, y: location.lat - 0.02 },
             })
           );
         }, 1000);

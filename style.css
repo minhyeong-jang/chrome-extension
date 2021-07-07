@@ -2,6 +2,9 @@ ul{margin:0px; padding:0px}
 li{list-style:none}
 a{text-decoration:none;color:inherit}
 
+* {
+  box-sizing: border-box;
+}
 /* collapse */
 .collapse{display:none}.collapse.in{display:block}tr.collapse.in{display:table-row}tbody.collapse.in{display:table-row-group}.collapsing{position:relative;height:0;overflow:hidden;-webkit-transition-timing-function:ease;-o-transition-timing-function:ease;transition-timing-function:ease;-webkit-transition-duration:.35s;-o-transition-duration:.35s;transition-duration:.35s;-webkit-transition-property:height,visibility;-o-transition-property:height,visibility;transition-property:height,visibility}
 
@@ -13,10 +16,15 @@ body {
 }
 .content {
   padding: 20px 15px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #aaa;
 }
-.content h3 {
-  font-size: 15px;
+.content .title {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 13px;
+}
+.content .subtitle {
+  font-size: 14px;
   font-weight: bold;
   margin: 0 0 10px 0;
 }
@@ -34,6 +42,32 @@ body {
   color: white;
   border-radius: 4px;
   margin-left: 3px;
+}
+.vaccine-list li {
+  padding: 12px 5px;
+  margin: 7px 15px;
+}
+.vaccine-list li a {
+  font-size: 14px;
+  font-weight: bold;
+}
+.vaccine-list li:not(:last-child) {
+  border-bottom: 1px solid #dedede;
+}
+.org-item {
+  padding: 11px 0px;
+  margin: 6px 0;
+}
+.org-item:not(:last-child) {
+  border-bottom: 1px solid #dedede;
+}
+.org-item .org-name {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.org-item .address {
+  font-size: 12px;
 }
 
 .content .panel {
