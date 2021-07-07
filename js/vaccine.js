@@ -9,6 +9,12 @@ $("#position").keypress(function (e) {
 $("button.search").on("click", () => {
   getVaccine();
 });
+$("button.popup-test").on("click", () => {
+  window.open(
+    `https://vaccine.kakao.com/reservation/123?from=KakaoMap&code=VEN00013`,
+    "_blank"
+  );
+});
 
 /**
  * 백신 정보
@@ -57,16 +63,20 @@ const getVaccine = () => {
           xhr.onload = () => {
             if (xhr.status === 200 || xhr.status === 201) {
               JSON.parse(xhr.responseText).organizations.map((item) => {
-                console.log(keywordItems[keyword]);
                 if (!keywordItems[keyword]) {
                   $(
                     `<div class="org-item"><div class="org-name">${item.orgName}</div><div class="address">${item.address}</div></div>`
                   ).appendTo(collapseItem);
                 }
                 if (item.leftCounts) {
-                  console.log(
-                    `interval ${keyword} : https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`
-                  );
+                  const successList = $(".success-list");
+                  const contentLi = $("<li>").appendTo(successList);
+                  $(
+                    `<a href="${`https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`}" target="_blank">${keyword} : ${
+                      item.orgName
+                    }</a>`
+                  ).appendTo(contentLi);
+
                   soundManager.onready(() => {
                     soundManager.createSound({
                       id: "mySound",

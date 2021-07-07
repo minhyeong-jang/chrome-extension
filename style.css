@@ -21,17 +21,18 @@ body {
 .content .title {
   font-size: 17px;
   font-weight: bold;
-  margin-bottom: 13px;
+  margin-bottom: 20px;
 }
 .content .subtitle {
   font-size: 14px;
   font-weight: bold;
-  margin: 0 0 10px 0;
+  margin: 0 0 5px 0;
 }
 .content input {
   border: 1px solid #dedede;
   padding: 7px;
   border-radius: 4px;
+  margin-top: 5px;
 }
 .content button {
   display: inline-block;
@@ -43,15 +44,20 @@ body {
   border-radius: 4px;
   margin-left: 3px;
 }
-.vaccine-list li {
-  padding: 12px 5px;
-  margin: 7px 15px;
+.content button.popup-test {
+  font-size: 12px;
+  padding: 5px 7px;
+  float: right;
+  margin-top: -4px;
 }
-.vaccine-list li a {
+.org-list li {
+  padding: 12px 5px;
+}
+.org-list li a {
   font-size: 14px;
   font-weight: bold;
 }
-.vaccine-list li:not(:last-child) {
+.org-list li:not(:last-child) {
   border-bottom: 1px solid #dedede;
 }
 .org-item {
@@ -70,14 +76,9 @@ body {
   font-size: 12px;
 }
 
-.content .panel {
-  margin-top: 10px;
-}
 
-.title-wrap h3 {
-  display: inline-block;
-  margin: 0px;
-}
+
+
 
 #weather li {
   text-align: center;
