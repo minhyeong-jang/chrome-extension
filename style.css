@@ -75,7 +75,20 @@ body {
 .org-item .address {
   font-size: 12px;
 }
-
+.loading-position {
+  border-radius: 50%;
+  width: 17px;
+  height: 17px;
+  background: blue;
+  float: right;
+}
+.loading-position.active {
+  border-radius: 50%;
+  width: 17px;
+  height: 17px;
+  background: red;
+  float: right;
+}
 
 
 

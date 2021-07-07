@@ -44,13 +44,13 @@ const getVaccine = () => {
         const list = $(".vaccine-list");
         const content = $("<li>").appendTo(list);
         $(
-          `<a data-toggle="collapse" href="#collapse-${collapseCount}">${keyword} 주변 확인 중..</a>`
+          `<a data-toggle="collapse" href="#collapse-${collapseCount}">${keyword} 주변 확인 중<div class="loading-position loading-${btoa(
+            unescape(encodeURIComponent(keyword))
+          )} active"></div></a>`
         ).appendTo(content);
         const collapseItem = $(
           `<div id="collapse-${collapseCount}" class="panel collapse" role="tabpanel">`
         ).appendTo(content);
-
-        collapseCount++;
 
         setInterval(() => {
           var xhr = new XMLHttpRequest();
@@ -62,6 +62,10 @@ const getVaccine = () => {
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.onload = () => {
             if (xhr.status === 200 || xhr.status === 201) {
+              $(
+                `.loading-${btoa(unescape(encodeURIComponent(keyword)))}`
+              ).toggleClass("active");
+
               JSON.parse(xhr.responseText).organizations.map((item) => {
                 if (!keywordItems[keyword]) {
                   $(
@@ -69,6 +73,9 @@ const getVaccine = () => {
                   ).appendTo(collapseItem);
                 }
                 if (item.leftCounts) {
+                  console.log(
+                    `성공했어요 : https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`
+                  );
                   const successList = $(".success-list");
                   const contentLi = $("<li>").appendTo(successList);
                   $(
@@ -104,6 +111,7 @@ const getVaccine = () => {
             })
           );
         }, 1000);
+        collapseCount++;
       }
     }
   );
