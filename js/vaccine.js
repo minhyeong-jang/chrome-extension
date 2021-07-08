@@ -24,19 +24,16 @@ let collapseCount = 0;
 
 const getVaccine = () => {
   const keyword = $("#position").val();
-  // 데이터를 전달받아 GET 전송
   let data = {
     address: keyword,
     key: "AIzaSyDDVqnsmm7TCLXzGSQhQPbADOi5NOGmuNo",
   };
   const params = lib.jsonToParameter(data);
 
-  // 구글 geocode api
-  lib.ajaxSubmit(
-    "https://maps.googleapis.com/maps/api/geocode/json" + params,
-    "GET",
-    "",
-    (data) => {
+  lib.ajaxSubmit({
+    url: "https://maps.googleapis.com/maps/api/geocode/json" + params,
+    type: "GET",
+    callback: (data) => {
       if (data.status === "OK") {
         if (keywordItems[keyword]) return;
         const loadingKeyword = btoa(
@@ -54,64 +51,113 @@ const getVaccine = () => {
         ).appendTo(content);
 
         setInterval(() => {
-          var xhr = new XMLHttpRequest();
-          xhr.open(
-            "POST",
-            "https://vaccine.kakao.com/api/v2/vaccine/left_count_by_coords",
-            true
-          );
-          xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.onload = () => {
-            if (xhr.status === 200 || xhr.status === 201) {
-              $(`.loading-${loadingKeyword}`).toggleClass("active");
-
-              JSON.parse(xhr.responseText).organizations.map((item) => {
-                if (!keywordItems[keyword]) {
-                  $(
-                    `<div class="org-item"><div class="org-name">${item.orgName}</div><div class="address">${item.address}</div></div>`
-                  ).appendTo(collapseItem);
-                }
-                if (item.leftCounts) {
-                  console.log(
-                    `성공했어요 : https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`
-                  );
-                  const successList = $(".success-list");
-                  const contentLi = $("<li>").appendTo(successList);
-                  $(
-                    `<a href="${`https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`}" target="_blank">${keyword} : ${
-                      item.orgName
-                    }</a>`
-                  ).appendTo(contentLi);
-
-                  soundManager.onready(() => {
-                    soundManager.createSound({
-                      id: "mySound",
-                      url: "/doorbell.wav",
-                    });
-                    soundManager.play("mySound");
-                  });
-                  window.open(
-                    `https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`,
-                    "_blank"
-                  );
-                }
-              });
-              keywordItems[keyword] = true;
-            } else {
-              console.error(xhr.responseText);
-            }
-          };
-          xhr.send(
-            JSON.stringify({
+          lib.ajaxSubmit({
+            url: "https://vaccine.kakao.com/api/v2/vaccine/left_count_by_coords",
+            type: "POST",
+            data: JSON.stringify({
               bottomRight: { x: location.lng - 0.01, y: location.lat + 0.02 },
               onlyLeft: false,
               order: "latitude",
               topLeft: { x: location.lng + 0.01, y: location.lat - 0.02 },
-            })
-          );
+            }),
+            beforeSend: (xhr) => {
+              xhr.setRequestHeader("Content-type", "application/json");
+            },
+            callback: (data) => {
+              try {
+                $(`.loading-${loadingKeyword}`).toggleClass("active");
+                data.organizations.map((item) => {
+                  if (!keywordItems[keyword]) {
+                    $(
+                      `<div class="org-item"><div class="org-name">${item.orgName}</div><div class="address">${item.address}</div></div>`
+                    ).appendTo(collapseItem);
+                  }
+                  if (item.leftCounts) {
+                    const successList = $(".success-list");
+                    const contentLi = $("<li>").appendTo(successList);
+                    $(
+                      `<a href="${`https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`}" target="_blank">${keyword} : ${
+                        item.orgName
+                      }</a>`
+                    ).appendTo(contentLi);
+
+                    soundManager.onready(() => {
+                      soundManager.createSound({
+                        id: "mySound",
+                        url: "/doorbell.wav",
+                      });
+                      soundManager.play("mySound");
+                    });
+                    window.open(
+                      `https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`,
+                      "_blank"
+                    );
+                  }
+                });
+                keywordItems[keyword] = true;
+              } catch (e) {
+                $(`.loading-${loadingKeyword}`).toggleClass("error");
+              }
+            },
+          });
+          // var xhr = new XMLHttpRequest();
+          // xhr.open(
+          //   "POST",
+          //   "https://vaccine.kakao.com/api/v2/vaccine/left_count_by_coords",
+          //   true
+          // );
+          // xhr.setRequestHeader("Content-Type", "application/json");
+          // xhr.onload = () => {
+          //   if (xhr.status === 200 || xhr.status === 201) {
+          //     $(`.loading-${loadingKeyword}`).toggleClass("active");
+
+          //     JSON.parse(xhr.responseText).organizations.map((item) => {
+          //       if (!keywordItems[keyword]) {
+          //         $(
+          //           `<div class="org-item"><div class="org-name">${item.orgName}</div><div class="address">${item.address}</div></div>`
+          //         ).appendTo(collapseItem);
+          //       }
+          //       if (item.leftCounts) {
+          //         console.log(
+          //           `성공했어요 : https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`
+          //         );
+          //         const successList = $(".success-list");
+          //         const contentLi = $("<li>").appendTo(successList);
+          //         $(
+          //           `<a href="${`https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`}" target="_blank">${keyword} : ${
+          //             item.orgName
+          //           }</a>`
+          //         ).appendTo(contentLi);
+
+          //         soundManager.onready(() => {
+          //           soundManager.createSound({
+          //             id: "mySound",
+          //             url: "/doorbell.wav",
+          //           });
+          //           soundManager.play("mySound");
+          //         });
+          //         window.open(
+          //           `https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`,
+          //           "_blank"
+          //         );
+          //       }
+          //     });
+          //     keywordItems[keyword] = true;
+          //   } else {
+          //     console.error(xhr.responseText);
+          //   }
+          // };
+          // xhr.send(
+          //   JSON.stringify({
+          //     bottomRight: { x: location.lng - 0.01, y: location.lat + 0.02 },
+          //     onlyLeft: false,
+          //     order: "latitude",
+          //     topLeft: { x: location.lng + 0.01, y: location.lat - 0.02 },
+          //   })
+          // );
         }, 1000);
         collapseCount++;
       }
-    }
-  );
+    },
+  });
 };

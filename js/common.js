@@ -5,12 +5,13 @@ var lib = lib || {};
  * lib.ajaxSubmit('https://test.co.kr', 'post', {a:'1',b:'2'}, function(status, message){ ... });
  * return results, status
  */
-lib.ajaxSubmit = function (url, type, data, callback) {
+lib.ajaxSubmit = ({ url, type, data, beforeSend, callback }) => {
   $.ajax({
     url: url,
     type: type,
     data: data,
-    success: function (data) {
+    beforeSend: beforeSend,
+    success: (data) => {
       callback(data);
     },
     cache: false,

@@ -42,7 +42,7 @@ tbody.collapse.in {
 }
 
 body {
-  width: 250px;
+  width: 275px;
   background-color: #fff;
   padding: 0px;
   margin: 0px;
@@ -112,10 +112,18 @@ body {
   border-radius: 50%;
   width: 17px;
   height: 17px;
-  background: blue;
+  background: #191919;
+  border: 1px solid #191919;
   float: right;
 }
 .loading-position.active {
+  border-radius: 50%;
+  width: 17px;
+  height: 17px;
+  background: white;
+  float: right;
+}
+.loading-position.error {
   border-radius: 50%;
   width: 17px;
   height: 17px;
