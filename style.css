@@ -61,7 +61,7 @@ button:hover {
 
 .content {
   padding: 15px 15px;
-  border-bottom: 1px solid #555;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
 }
 .content:last-child {
   border: 0;
