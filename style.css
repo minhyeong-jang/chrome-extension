@@ -26,6 +26,11 @@ button:hover {
   opacity: 0.8;
 }
 
+.container {
+  max-height: 600px;
+  min-height: 600px;
+  overflow-y: scroll;
+}
 .buy-coffee-img {
   width: 100%;
   height: 138px;
