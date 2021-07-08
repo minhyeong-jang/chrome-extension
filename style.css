@@ -61,14 +61,17 @@ body {
   font-weight: bold;
   margin: 0 0 5px 0;
 }
+.content .input-wrap {
+  display: flex;
+  margin-top: 8px;
+}
 .content input {
+  flex: 1 1 auto;
   border: 1px solid #dedede;
   padding: 7px;
   border-radius: 4px;
-  margin-top: 5px;
 }
 .content button {
-  display: inline-block;
   text-align: center;
   padding: 7px 12px;
   border: 1px solid #dedede;
