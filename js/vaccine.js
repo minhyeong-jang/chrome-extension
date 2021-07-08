@@ -18,18 +18,19 @@ let collapseCount = 0;
 
 const getVaccine = () => {
   const keyword = $("#position").val();
-  let data = {
+  $("#position").val("");
+  if (keywordItems[keyword]) return;
+
+  const params = lib.jsonToParameter({
     address: keyword,
     key: "AIzaSyDDVqnsmm7TCLXzGSQhQPbADOi5NOGmuNo",
-  };
-  const params = lib.jsonToParameter(data);
+  });
 
   lib.ajaxSubmit({
     url: "https://maps.googleapis.com/maps/api/geocode/json" + params,
     type: "GET",
     callback: (data) => {
       if (data.status === "OK") {
-        if (keywordItems[keyword]) return;
         const loadingKeyword = btoa(
           unescape(encodeURIComponent(keyword))
         ).replace(/[^a-zA-Z]/g, "");

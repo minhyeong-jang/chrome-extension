@@ -1,65 +1,76 @@
-ul {
-  margin: 0px;
-  padding: 0px;
-}
-li {
-  list-style: none;
-}
-a {
+* {
   text-decoration: none;
   color: inherit;
-}
-
-* {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
   box-sizing: border-box;
 }
-/* collapse */
-.collapse {
-  display: none;
-}
-.collapse.in {
-  display: block;
-}
-tr.collapse.in {
-  display: table-row;
-}
-tbody.collapse.in {
-  display: table-row-group;
-}
-.collapsing {
-  position: relative;
-  height: 0;
-  overflow: hidden;
-  -webkit-transition-timing-function: ease;
-  -o-transition-timing-function: ease;
-  transition-timing-function: ease;
-  -webkit-transition-duration: 0.35s;
-  -o-transition-duration: 0.35s;
-  transition-duration: 0.35s;
-  -webkit-transition-property: height, visibility;
-  -o-transition-property: height, visibility;
-  transition-property: height, visibility;
-}
-
 body {
-  width: 275px;
+  width: 350px;
   background-color: #fff;
   padding: 0px;
   margin: 0px;
 }
-.content {
-  padding: 20px 15px;
-  border-bottom: 1px solid #aaa;
+button {
+  text-align: center;
+  padding: 7px 12px;
+  border: 1px solid #7B4CE6;
+  background-color: #7B4CE6;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  transition: opacity 0.2s;
 }
-.content .title {
-  font-size: 17px;
+button:hover {
+  opacity: 0.8;
+}
+
+.buy-coffee-img {
+  width: 100%;
+  height: 138px;
+  background-image: url('./buycoffee.jpeg');
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+.gimme-coffee {
+  padding: 7px 5px;
+  font-size: 12px;
+  text-align: center;
   font-weight: bold;
-  margin-bottom: 20px;
+  color: white;
+  background: #bc5ffd;
+}
+.infomation {
+  display: flex;
+  width: 100%;
+  padding: 10px 10px;
+}
+.infomation button {
+  flex: 1 0 calc(50% - 10px);
+  margin: 0 5px;
+}
+.modal-info-body {
+  line-height: 1.6;
+  word-break: keep-all;
+}
+.modal-info-body a {
+  text-decoration: underline;
+}
+
+.content {
+  padding: 15px 15px;
+  border-bottom: 1px solid #555;
+}
+.content:last-child {
+  border: 0;
 }
 .content .subtitle {
   font-size: 14px;
   font-weight: bold;
   margin: 0 0 5px 0;
+  color: #555;
 }
 .content .input-wrap {
   display: flex;
@@ -67,24 +78,19 @@ body {
 }
 .content input {
   flex: 1 1 auto;
-  border: 1px solid #dedede;
+  border: 1px solid #bbb;
   padding: 7px;
   border-radius: 4px;
+  color: #333;
+  outline: none;
+}
+.content input::placeholder {
+  color:#bbb; 
 }
 .content button {
-  text-align: center;
-  padding: 7px 12px;
-  border: 1px solid #dedede;
-  background-color: #191919;
-  color: white;
-  border-radius: 4px;
   margin-left: 3px;
-}
-.content button.popup-test {
-  font-size: 12px;
-  padding: 5px 7px;
-  float: right;
-  margin-top: -4px;
+  border-color: #555;
+  background-color: #555;
 }
 .org-list li {
   padding: 12px 5px;
@@ -115,8 +121,8 @@ body {
   border-radius: 50%;
   width: 17px;
   height: 17px;
-  background: #191919;
-  border: 1px solid #191919;
+  background: #7B4CE6;
+  border: 1px solid #7B4CE6;
   float: right;
 }
 .loading-position.active {
@@ -132,4 +138,156 @@ body {
   height: 17px;
   background: red;
   float: right;
+}
+
+
+/* collapse */
+.collapse {
+  display: none;
+}
+.collapse.in {
+  display: block;
+}
+tr.collapse.in {
+  display: table-row;
+}
+tbody.collapse.in {
+  display: table-row-group;
+}
+.collapsing {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition-timing-function: ease;
+  -o-transition-timing-function: ease;
+  transition-timing-function: ease;
+  -webkit-transition-duration: 0.35s;
+  -o-transition-duration: 0.35s;
+  transition-duration: 0.35s;
+  -webkit-transition-property: height, visibility;
+  -o-transition-property: height, visibility;
+  transition-property: height, visibility;
+}
+.modal-open {
+  overflow: hidden;
+}
+.modal {
+  display: none;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+}
+.modal.fade .modal-dialog {
+  -webkit-transform: translate(0, -25%);
+  -ms-transform: translate(0, -25%);
+  -o-transform: translate(0, -25%);
+  transform: translate(0, -25%);
+  -webkit-transition: -webkit-transform 0.3s ease-out;
+  -moz-transition: -moz-transform 0.3s ease-out;
+  -o-transition: -o-transform 0.3s ease-out;
+  transition: transform 0.3s ease-out;
+}
+.modal.in .modal-dialog {
+  -webkit-transform: translate(0, 0);
+  -ms-transform: translate(0, 0);
+  -o-transform: translate(0, 0);
+  transform: translate(0, 0);
+}
+.modal-open .modal {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 10px;
+}
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  background-clip: padding-box;
+  outline: 0;
+}
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+}
+.modal-backdrop.fade {
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+.modal-backdrop.in {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+}
+.modal-header {
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.modal-header .close {
+  margin-top: -2px;
+}
+.modal-title {
+  margin: 0;
+  line-height: 1.42857143;
+}
+.modal-body {
+  position: relative;
+  padding: 15px;
+}
+.modal-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+}
+.modal-footer .btn + .btn {
+  margin-left: 5px;
+  margin-bottom: 0;
+}
+.modal-footer .btn-group .btn + .btn {
+  margin-left: -1px;
+}
+.modal-footer .btn-block + .btn-block {
+  margin-left: 0;
+}
+.modal-scrollbar-measure {
+  position: absolute;
+  top: -9999px;
+  width: 50px;
+  height: 50px;
+  overflow: scroll;
+}
+@media (min-width: 768px) {
+  .modal-dialog {
+    width: 600px;
+    margin: 30px auto;
+  }
+  .modal-content {
+    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  }
+  .modal-sm {
+    width: 300px;
+  }
+}
+@media (min-width: 992px) {
+  .modal-lg {
+    width: 900px;
+  }
 }
