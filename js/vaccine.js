@@ -6,6 +6,13 @@ $("#position").keypress(function (e) {
 $("button.search").on("click", () => {
   getVaccine();
 });
+$("button.popup-info").on("click", () => {
+  window.open(
+    `https://www.notion.so/Kakao-Vaccine-984167bec4b944cfa10200aee5fd18b7`,
+    "_blank"
+  );
+});
+
 $("button.popup-test").on("click", () => {
   window.open(`https://vaccine.kakao.com/reservation/123`, "_blank");
 });
@@ -61,11 +68,12 @@ const getVaccine = async () => {
     }
     keywordItems[keyword] = true;
 
+    const uniqLoading = encodeURIComponent(keyword).replace(/[^A-Z]/g, "");
     const list = $(".vaccine-list");
     const content = $("<li>").appendTo(list);
     $(`<a data-toggle="collapse" href="#collapse-${count}">
-        ${keyword} 주변 확인 중
-        <div class="loading-position loading-${count} active"></div>
+        ${keyword}
+        <div class="loading-position loading-${uniqLoading} active"></div>
       </a>`).appendTo(content);
     const collapseItem = $(
       `<div id="collapse-${count}" class="panel collapse" role="tabpanel">`
@@ -80,7 +88,7 @@ const getVaccine = async () => {
     setInterval(async () => {
       try {
         const items = await getLeftCount(location.lng, location.lat);
-        $(`.loading-${count}`).toggleClass("active");
+        $(`.loading-${uniqLoading}`).toggleClass("active");
         items.organizations.map((item) => {
           if (item.leftCounts) {
             const successList = $(".success-list");
@@ -104,7 +112,7 @@ const getVaccine = async () => {
           }
         });
       } catch (e) {
-        $(`.loading-${count}`).toggleClass("error");
+        $(`.loading-${uniqLoading}`).toggleClass("error");
       }
     }, 1000);
     count++;

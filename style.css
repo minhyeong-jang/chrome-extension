@@ -1,10 +1,22 @@
+/* 메인컬러 : bc5ffe */
 * {
   text-decoration: none;
   color: inherit;
   margin: 0px;
   padding: 0px;
+  font-family: -apple-system, BlinkMacSystemFont, 맑은 고딕, Malgun Gothic, Apple SD 산돌고딕 Neo, Apple SD Gothic Neo, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   list-style: none;
   box-sizing: border-box;
+}
+@font-face {
+  font-family: 'fontello';
+  src: url('./font/fontello.eot?3232728');
+  src: url('./font/fontello.eot?3232728#iefix') format('embedded-opentype'),
+       url('./font/fontello.woff?3232728') format('woff'),
+       url('./font/fontello.ttf?3232728') format('truetype'),
+       url('./font/fontello.svg?3232728#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 body {
   width: 350px;
@@ -26,12 +38,16 @@ button {
 button:hover {
   opacity: 0.8;
 }
-
 .container {
-  max-height: 600px;
-  min-height: 600px;
+  max-height: 500px;
+  min-height: 500px;
   overflow-y: scroll;
+  padding-bottom: 65px;
 }
+
+/**
+ * 배너 영역
+ */
 .banner {
   width: 100%;
   height: 170px;
@@ -40,26 +56,66 @@ button:hover {
   background-repeat: no-repeat;
   background-position: 50% 50%;
 }
+
+/**
+ * 소개 영역
+ */
 .infomation {
+  position: fixed;
+  bottom: 0;
   display: flex;
   width: 100%;
-  padding: 10px 10px;
+  padding: 15px 7px;
+  background: white;
 }
 .infomation button {
-  flex: 1 0 calc(50% - 10px);
-  margin: 0 5px;
+  flex: 1 0 calc(50% - 7px);
+  border-radius: 0;
 }
-.modal-info-body {
-  line-height: 1.6;
-  word-break: keep-all;
+.infomation button:first-child {
+  margin-right: 7px;
+  background-color: #7B4AE8;
+  border-color: #7B4AE8;
 }
-.modal-info-body a {
-  text-decoration: underline;
+.infomation button:last-child {
+  background-color: #5852FF;
+  border-color: #5852FF;
+}
+
+/**
+ * 검색
+ */
+.search {
+  position: relative;
+  padding: 10px 7px;
+}
+.search .icon-search {
+  position: absolute;
+  color: #7b4ae8;
+  font-style: normal;
+  font-family: "fontello";
+  font-size: 19px;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 20px;
+  background: none;
+}
+.search input {
+  border: 2px solid rgb(123 74 232 / 68%);
+  padding: 10px 10px 10px 40px;
+  border-radius: 4px;
+  color: #333;
+  width: 100%;
+  outline: none;
+  font-size: 15px;
+  font-weight: 500;
+}
+.search input::placeholder {
+  color:#bbb; 
 }
 
 .content {
-  padding: 15px 15px;
-  border-bottom: 1px solid rgba(0,0,0,0.2);
+  padding: 15px 7px;
 }
 .content:last-child {
   border: 0;
@@ -68,66 +124,53 @@ button:hover {
   font-size: 14px;
   font-weight: bold;
   margin: 0 0 5px 0;
-  color: #555;
-}
-.content .input-wrap {
-  display: flex;
-  margin-top: 8px;
-}
-.content input {
-  flex: 1 1 auto;
-  border: 1px solid #bbb;
-  padding: 7px;
-  border-radius: 4px;
   color: #333;
-  outline: none;
-}
-.content input::placeholder {
-  color:#bbb; 
-}
-.content button {
-  margin-left: 3px;
-  border-color: #555;
-  background-color: #555;
 }
 .org-list li {
   padding: 12px 5px;
+  margin: 0 5px;
+  color: #333;
 }
 .org-list li a {
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 500;
 }
 .org-list li:not(:last-child) {
   border-bottom: 1px solid #dedede;
 }
-.org-item {
+.org-list .org-item {
   padding: 11px 0px;
   margin: 6px 0;
 }
-.org-item:not(:last-child) {
+.org-list .org-item:not(:last-child) {
   border-bottom: 1px solid #dedede;
 }
-.org-item .org-name {
+.org-list .org-item .org-name {
   font-size: 13px;
   font-weight: bold;
   margin-bottom: 4px;
 }
-.org-item .address {
+.org-list .org-item .address {
   font-size: 12px;
 }
+
+/**
+ * Loading
+ */
 .loading-position {
   border-radius: 50%;
   width: 17px;
   height: 17px;
-  background: #7B4CE6;
-  border: 1px solid #7B4CE6;
+  background: #4A84E8;
+  border: 1px solid #4A84E8;
   float: right;
 }
 .loading-position.active {
   border-radius: 50%;
   width: 17px;
   height: 17px;
-  background: white;
+  background-color: #BC5EFF;
+  border-color: #BC5EFF;
   float: right;
 }
 .loading-position.error {
