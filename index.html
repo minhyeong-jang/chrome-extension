@@ -6,27 +6,15 @@
   </head>
   <body>
     <div class="container">
-      <a href="https://www.buymeacoffee.com/minhyeong" target="_blank">
-        <div class="buy-coffee-img"></div>
-        <div class="gimme-coffee">
-          실례가 안 된다면 커피 한 잔만 사주십시오.
-        </div>
-      </a>
+      <div class="banner"></div>
       <div class="infomation">
-        <button
-          type="button"
-          class="popup-info"
-          data-toggle="modal"
-          data-target="#info-modal"
-        >
-          설명서
-        </button>
+        <button type="button" class="popup-info">설명서</button>
         <button type="button" class="popup-test">팝업 테스트</button>
       </div>
       <div class="content">
-        <h3 class="subtitle">지도 검색어</h3>
+        <h3 class="subtitle">장소 검색어</h3>
         <div class="input-wrap">
-          <input id="position" placeholder="ex) 서울대입구역" />
+          <input id="position" placeholder="ex) 강남역, 코엑스 등" />
           <button class="search">검색</button>
         </div>
       </div>
@@ -35,58 +23,15 @@
         <ul class="success-list org-list"></ul>
       </div>
       <div class="content">
-        <h3 class="subtitle">검색중인 지역</h3>
+        <h3 class="subtitle">검색중인 지역 ( 최대 5개 )</h3>
         <ul class="vaccine-list org-list"></ul>
       </div>
     </div>
-    <!-- Modal -->
-    <div
-      class="modal fade"
-      id="info-modal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="myModalLabel"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">설명서</h4>
-          </div>
-          <div class="modal-body">
-            <div class="modal-info-body">
-              <b>플러그인 활성화</b><br />
-              1.
-              <a href="https://vaccine.kakao.com/map2" target="_blank"
-                >https://vaccine.kakao.com/map2</a
-              >
-              접속<br />
-              2. 우측 상단 카카오 버튼 클릭해서 로그인<br />
-              3. 플러그인을 누르고 “지도 검색어“를 입력<br />
-              ex) 서울대입구역, 강남역, 건대역 등<br />
-              -> 해당 검색어 주변 잔여백신 있으면 자동으로 예약됩니다.<br /><br />
-              <b>유의사항</b><br />
-              - 크롬에서만 가능한 플러그인입니다.<br />
-              - 플러그인 창을 닫으면 작동하지 않습니다.<br />
-              - 탭 이동 시 플러그인 창이 닫히면서 동작하지 않습니다.<br />
-              - 동일한 지역명이 존재할 수 있어 검색어 앞에 ‘서울시’ 등 시/도를
-              붙이거나 등록된 검색어를 클릭하여 병원 주소를 확인해주세요.<br />
-              - 잠자기모드 등 네트워크 연결이 끊어지면 동작하지 않습니다.<br />
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+
     <!--module-->
     <script type="text/javascript" src="module/jquery.min.js"></script>
     <script type="text/javascript" src="module/soundmanager.min.js"></script>
     <script type="text/javascript" src="module/bootstrap.min.js"></script>
-    <!-- <script type="text/javascript" src="module/moment.js"></script> -->
-    <!-- <script type="text/javascript" src="module/sweetalert.min.js"></script> -->
     <!--/module-->
 
     <!--custom-->
