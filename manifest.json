@@ -1,12 +1,12 @@
 {
   "manifest_version": 2,
-  "name": "Kakao Vaccine",
-  "description": "카카오 잔여백신 예약하기",
-  "version": "1.0.9",
+  "name": "Vaccine Plugin",
+  "description": "잔여백신 예약하기",
+  "version": "1.2.0",
   "browser_action": {
     "default_icon": "covid-vaccine.png",
     "default_popup": "index.html",
-    "default_title": "Kakao Vaccine"
+    "default_title": "Vaccine Plugin"
   },
   "permissions": ["https://vaccine.kakao.com/*"]
 }

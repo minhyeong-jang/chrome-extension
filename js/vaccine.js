@@ -1,3 +1,6 @@
+let keywordItems = [];
+let count = 0;
+
 $("#position").keypress(function (e) {
   if (e.which == 13) {
     getVaccine();
@@ -16,9 +19,6 @@ $("button.popup-info").on("click", () => {
 $("button.popup-test").on("click", () => {
   window.open(`https://vaccine.kakao.com/reservation/123`, "_blank");
 });
-
-let keywordItems = {};
-let count = 0;
 
 const getCoords = async (keyword) => {
   const params = lib.jsonToParameter({
@@ -45,11 +45,28 @@ const getLeftCount = async (lng, lat) => {
     },
   });
 };
+const updateReservation = async (orgCode) => {
+  return lib.ajaxSubmit({
+    url: "https://vaccine.kakao.com/api/v1/reservation",
+    type: "POST",
+    data: JSON.stringify({
+      distance: null,
+      from: "KakaoMap",
+      orgCode,
+      vaccineCode: "VEN00013",
+    }),
+    beforeSend: (xhr) => {
+      xhr.setRequestHeader("Content-type", "application/json");
+    },
+  });
+};
 const getVaccine = async () => {
   const keyword = $("#position").val();
+  if (keyword === "") return;
   $("#position").val("");
-  if (keywordItems[keyword]) return;
-  if (Object.keys(keywordItems).length > 4) return;
+
+  if (keywordItems.filter((item) => item.keyword === keyword) > 0) return;
+  if (keywordItems.length > 4) return;
 
   const coords = await getCoords(keyword);
   if (coords.status === "OK") {
@@ -66,7 +83,7 @@ const getVaccine = async () => {
     if (!leftList.organizations.length) {
       return;
     }
-    keywordItems[keyword] = true;
+    keywordItems[count] = { keyword, interval: undefined };
 
     const uniqLoading = encodeURIComponent(keyword).replace(/[^A-Z]/g, "");
     const list = $(".vaccine-list");
@@ -85,18 +102,19 @@ const getVaccine = async () => {
         </div>`).appendTo(collapseItem);
     });
 
-    setInterval(async () => {
+    keywordItems[count].interval = setInterval(async () => {
       try {
-        const items = await getLeftCount(location.lng, location.lat);
+        // const items = await getLeftCount(location.lng, location.lat);
         $(`.loading-${uniqLoading}`).toggleClass("active");
-        items.organizations.map((item) => {
-          if (item.leftCounts) {
+        $(`.loading-${uniqLoading}`).removeClass("error");
+        leftList.organizations.map(async (item) => {
+          try {
+            await updateReservation(item.orgCode);
             const successList = $(".success-list");
             const contentLi = $("<li>").appendTo(successList);
-            $(`<a href="${`https://vaccine.kakao.com/reservation/${item.orgCode}`}" target="_blank">
+            $(`<a href="https://vaccine.kakao.com/history" target="_blank">
                 ${keyword} : ${item.orgName}
               </a>`).appendTo(contentLi);
-
             soundManager.onready(() => {
               soundManager.createSound({
                 id: "mySound",
@@ -105,16 +123,15 @@ const getVaccine = async () => {
               });
               soundManager.play("mySound");
             });
-            window.open(
-              `https://vaccine.kakao.com/reservation/${item.orgCode}?from=KakaoMap&code=VEN00013`,
-              "_blank"
-            );
-          }
+            $("#success").removeClass("hide");
+            keywordItems.map((item) => clearInterval(item.interval));
+            $(".loading-position").removeClass("active");
+          } catch (e) {}
         });
       } catch (e) {
-        $(`.loading-${uniqLoading}`).toggleClass("error");
+        $(`.loading-${uniqLoading}`).addClass("error");
       }
-    }, 1000);
+    }, 250);
     count++;
   }
 };

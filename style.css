@@ -38,9 +38,13 @@ button {
 button:hover {
   opacity: 0.8;
 }
+.hide {
+  display: none;
+}
+
 .container {
-  max-height: 500px;
-  min-height: 500px;
+  max-height: 550px;
+  min-height: 550px;
   overflow-y: scroll;
   padding-bottom: 65px;
 }
@@ -166,19 +170,12 @@ button:hover {
   float: right;
 }
 .loading-position.active {
-  border-radius: 50%;
-  width: 17px;
-  height: 17px;
   background-color: #BC5EFF;
   border-color: #BC5EFF;
-  float: right;
 }
 .loading-position.error {
-  border-radius: 50%;
-  width: 17px;
-  height: 17px;
   background: red;
-  float: right;
+  border-color: red;
 }
 
 
