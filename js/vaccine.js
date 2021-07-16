@@ -35,10 +35,10 @@ const getLeftCount = async (lng, lat) => {
     url: "https://vaccine.kakao.com/api/v2/vaccine/left_count_by_coords",
     type: "POST",
     data: JSON.stringify({
-      bottomRight: { x: lng - 0.01, y: lat + 0.02 },
+      bottomRight: { x: lng - 0.02, y: lat + 0.04 },
       onlyLeft: false,
       order: "latitude",
-      topLeft: { x: lng + 0.01, y: lat - 0.02 },
+      topLeft: { x: lng + 0.02, y: lat - 0.04 },
     }),
     beforeSend: (xhr) => {
       xhr.setRequestHeader("Content-type", "application/json");
@@ -83,15 +83,25 @@ const getVaccine = async () => {
     if (!leftList.organizations.length) {
       return;
     }
-    keywordItems[count] = { keyword, interval: undefined };
+    keywordItems.push({ index: count, keyword, interval: undefined });
 
     const uniqLoading = encodeURIComponent(keyword).replace(/[^A-Z]/g, "");
     const list = $(".vaccine-list");
-    const content = $("<li>").appendTo(list);
-    $(`<a data-toggle="collapse" href="#collapse-${count}">
-        ${keyword}
+    const content = $(`<li data-attr-id="${count}">`).appendTo(list);
+    $(`<a data-toggle="collapse" href="#collapse-${count}">${keyword}<button class="btn-delete hide" data-attr-id="${count}"><i class="icon-trash"></i></button>
         <div class="loading-position loading-${uniqLoading} active"></div>
       </a>`).appendTo(content);
+    // content.on("click", "button", (ele) => {
+    //   const id = ele.currentTarget.getAttribute("data-attr-id");
+    //   const target = keywordItems.filter(
+    //     (item) => item.index === parseInt(id)
+    //   )[0];
+    //   if (target) {
+    //     clearInterval(target.interval);
+    //   }
+    //   keywordItems = keywordItems.filter((item) => item.index !== parseInt(id));
+    //   $(`.vaccine-list li[data-attr-id="${id}"]`).remove();
+    // });
     const collapseItem = $(
       `<div id="collapse-${count}" class="panel collapse" role="tabpanel">`
     ).appendTo(content);
@@ -104,34 +114,36 @@ const getVaccine = async () => {
 
     keywordItems[count].interval = setInterval(async () => {
       try {
-        // const items = await getLeftCount(location.lng, location.lat);
+        const items = await getLeftCount(location.lng, location.lat);
         $(`.loading-${uniqLoading}`).toggleClass("active");
         $(`.loading-${uniqLoading}`).removeClass("error");
-        leftList.organizations.map(async (item) => {
-          try {
-            await updateReservation(item.orgCode);
-            const successList = $(".success-list");
-            const contentLi = $("<li>").appendTo(successList);
-            $(`<a href="https://vaccine.kakao.com/history" target="_blank">
+        items.organizations.map(async (item) => {
+          if (item.leftCount) {
+            try {
+              await updateReservation(item.orgCode);
+              const successList = $(".success-list");
+              const contentLi = $("<li>").appendTo(successList);
+              $(`<a href="https://vaccine.kakao.com/history" target="_blank">
                 ${keyword} : ${item.orgName}
               </a>`).appendTo(contentLi);
-            soundManager.onready(() => {
-              soundManager.createSound({
-                id: "mySound",
-                url: "/doorbell.wav",
-                volume: 30,
+              soundManager.onready(() => {
+                soundManager.createSound({
+                  id: "mySound",
+                  url: "/doorbell.wav",
+                  volume: 30,
+                });
+                soundManager.play("mySound");
               });
-              soundManager.play("mySound");
-            });
-            $("#success").removeClass("hide");
-            keywordItems.map((item) => clearInterval(item.interval));
-            $(".loading-position").removeClass("active");
-          } catch (e) {}
+              $("#success").removeClass("hide");
+              keywordItems.map((item) => clearInterval(item.interval));
+              $(".loading-position").removeClass("active");
+            } catch (e) {}
+          }
         });
       } catch (e) {
         $(`.loading-${uniqLoading}`).addClass("error");
       }
-    }, 250);
+    }, 40);
     count++;
   }
 };
