@@ -34,7 +34,6 @@ button:hover {
 .hide {
   display: none;
 }
-
 .container {
   max-height: 550px;
   min-height: 550px;
@@ -43,7 +42,7 @@ button:hover {
 }
 
 /**
- * 배너 영역
+ * Banner
  */
 .banner {
   width: 100%;
@@ -55,7 +54,7 @@ button:hover {
 }
 
 /**
- * 소개 영역
+ * Intro
  */
 .infomation {
   position: fixed;
@@ -85,7 +84,28 @@ button:hover {
 }
 
 /**
- * 검색
+ * Version
+ */
+.version-wrap {
+  margin: 5px 10px 5px;
+  display: flex;
+}
+.version-wrap button {
+  background: none;
+  flex: 1 1 auto;
+  border: 0;
+  border-bottom: 2px solid white;
+  margin: 0px 25px;
+  padding: 10px 7px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.version-wrap button.active {
+  border-color: #7B4AE8;
+}
+
+/**
+ * Search
  */
 .search {
   position: relative;
@@ -112,6 +132,23 @@ button:hover {
 }
 .search input::placeholder {
   color:#bbb; 
+}
+
+/**
+ * Search List
+ */
+#search-list {}
+#search-list .list-v2 {
+  position: relative;
+}
+#search-list .list-v2 .org-name {
+  font-weight: bold;
+}
+#search-list .list-v2 .loading-position {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .content {
