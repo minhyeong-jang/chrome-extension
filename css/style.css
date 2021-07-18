@@ -92,11 +92,11 @@ button:hover {
 }
 .version-wrap button {
   background: none;
-  flex: 1 1 auto;
+  flex: 1 1 33.3%;
   border: 0;
   border-bottom: 2px solid white;
-  margin: 0px 25px;
-  padding: 10px 7px;
+  margin: 0px 15px;
+  padding: 10px 3px;
   font-weight: bold;
   cursor: pointer;
 }
@@ -117,7 +117,7 @@ button:hover {
   font-size: 19px;
   top: 50%;
   transform: translateY(-50%);
-  left: 20px;
+  left: 15px;
   background: none;
 }
 .search input {
@@ -132,6 +132,13 @@ button:hover {
 }
 .search input::placeholder {
   color:#bbb; 
+}
+.search .error-message {
+  position: absolute;
+  bottom: -10px;
+  right: 10px;
+  color: red;
+  font-size: 13px;
 }
 
 /**

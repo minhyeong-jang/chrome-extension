@@ -1,5 +1,8 @@
 var lib = lib || {};
 
+lib.getFloatFixed = (value, fixed) => {
+  return parseFloat(Math.round(value * 100) / 100).toFixed(fixed);
+};
 lib.ajaxSubmit = ({ url, type, data, beforeSend }) => {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -15,26 +18,6 @@ lib.ajaxSubmit = ({ url, type, data, beforeSend }) => {
     });
   });
 };
-
-/**
- * Ajax 간편화
- * lib.ajaxSubmit('https://test.co.kr', 'post', {a:'1',b:'2'}, function(status, message){ ... });
- * return results, status
- */
-// lib.ajaxSubmit = ({ url, type, data, beforeSend, callback }) => {
-//   $.ajax({
-//     url: url,
-//     type: type,
-//     data: data,
-//     beforeSend: beforeSend,
-//     success: (data) => {
-//       callback(data);
-//     },
-//     cache: false,
-//     contentType: false,
-//     processData: false,
-//   });
-// };
 
 /**
  * JSON -> URL Parameter

@@ -2,11 +2,16 @@
   "manifest_version": 2,
   "name": "Vaccine Plugin",
   "description": "잔여백신 예약하기",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "browser_action": {
     "default_icon": "covid-vaccine.png",
     "default_popup": "index.html",
     "default_title": "Vaccine Plugin"
   },
-  "permissions": ["https://vaccine.kakao.com/*"]
+  "permissions": [
+    "http://v-search.nid.naver.com/*",
+    "https://vaccine.kakao.com/*",
+    "https://v-search.nid.naver.com/*",
+    "https://api.place.naver.com/*"
+  ]
 }

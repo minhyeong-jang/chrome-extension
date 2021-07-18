@@ -9,12 +9,14 @@
     <div class="container">
       <div class="banner"></div>
       <div class="version-wrap">
-        <button class="active" data-attr-id="1">Version 1</button>
-        <button data-attr-id="2">Version 2</button>
+        <button class="active" data-attr-id="1">Kakao V1</button>
+        <button data-attr-id="2">Kakao V2</button>
+        <button data-attr-id="3">Naver V1</button>
       </div>
       <div class="search">
         <i class="icon-search"></i>
         <input id="position" placeholder="장소, 지하철역, 공원 등" />
+        <div class="error-message"></div>
       </div>
       <div id="success-list" class="content hide">
         <h3 class="subtitle">접종 예약 병원</h3>
@@ -39,6 +41,8 @@
     <!--custom-->
     <script type="text/javascript" src="js/common.js"></script>
     <script type="text/javascript" src="js/vaccine.js"></script>
+    <script type="text/javascript" src="js/vaccine-naver.js"></script>
+    <script type="text/javascript" src="js/vaccine-kakao.js"></script>
     <!--/custom-->
   </body>
 </html>
