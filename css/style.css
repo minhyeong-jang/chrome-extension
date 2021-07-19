@@ -95,13 +95,15 @@ button:hover {
   flex: 1 1 33.3%;
   border: 0;
   border-bottom: 2px solid white;
-  margin: 0px 15px;
+  margin: 0px 0px;
   padding: 10px 3px;
   font-weight: bold;
   cursor: pointer;
+  color: #aaa;
 }
 .version-wrap button.active {
   border-color: #7B4AE8;
+  color: #000;
 }
 
 /**
