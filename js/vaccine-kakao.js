@@ -20,6 +20,7 @@ var getLeftCount = async (lng, lat, onlyLeft, initial = false) => {
       showErrorMessage("검색지역의 병원이 모두 마감되었습니다.");
       return [];
     }
+    showErrorMessage("");
     return filterData;
   } catch (e) {
     showErrorMessage("병원리스트 불러오기 오류");
