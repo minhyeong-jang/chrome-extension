@@ -1,17 +1,45 @@
-var getLeftCount = async (lng, lat, onlyLeft) => {
-  return lib.ajaxSubmit({
-    url: "https://vaccine.kakao.com/api/v2/vaccine/left_count_by_coords",
-    type: "POST",
-    data: JSON.stringify({
-      bottomRight: { x: lng - 0.02, y: lat + 0.04 },
-      onlyLeft,
-      order: "latitude",
-      topLeft: { x: lng + 0.02, y: lat - 0.04 },
-    }),
-    beforeSend: (xhr) => {
-      xhr.setRequestHeader("Content-type", "application/json");
-    },
-  });
+var getLeftCount = async (lng, lat, onlyLeft, initial = false) => {
+  try {
+    const res = await lib.ajaxSubmit({
+      url: "https://vaccine.kakao.com/api/v2/vaccine/left_count_by_coords",
+      type: "POST",
+      data: JSON.stringify({
+        bottomRight: { x: lng - 0.02, y: lat + 0.035 },
+        onlyLeft,
+        order: "latitude",
+        topLeft: { x: lng + 0.02, y: lat - 0.035 },
+      }),
+      beforeSend: (xhr) => {
+        xhr.setRequestHeader("Content-type", "application/json");
+      },
+    });
+    const filterData = res.organizations.filter(
+      (item) => item.status !== "CLOSED"
+    );
+    if (initial && !filterData.length) {
+      showErrorMessage("검색지역의 병원이 모두 마감되었습니다.");
+      return;
+    }
+    return filterData;
+  } catch (e) {
+    showErrorMessage("병원리스트 불러오기 오류");
+    return;
+  }
+};
+var userCheck = async () => {
+  try {
+    await lib.ajaxSubmit({
+      url: "https://vaccine.kakao.com/api/v1/user",
+      type: "GET",
+      beforeSend: (xhr) => {
+        xhr.setRequestHeader("Content-type", "application/json");
+      },
+    });
+    return true;
+  } catch (e) {
+    showErrorMessage("카카오 로그인/약관동의 오류");
+    return;
+  }
 };
 var updateReservation = async (orgCode) => {
   return lib.ajaxSubmit({
@@ -28,54 +56,69 @@ var updateReservation = async (orgCode) => {
     },
   });
 };
-var getVaccine = async (keyword) => {
+var renderKakaoListV1 = (keyword, kakaoList) => {
+  const uniqLoading = encodeURIComponent(keyword).replace(/[^A-Z]/g, "");
+  const list = $("#search-list ul");
+  const content = $(`<li data-attr-id="${count}">`).appendTo(list);
+  $(`<a data-toggle="collapse" href="#collapse-${count}">${keyword}
+      <button class="btn-delete" data-attr-id="${count}"><i class="icon-trash"></i></button>
+      <div class="loading-position loading-${uniqLoading} active"></div>
+    </a>`).appendTo(content);
+  content.on("click", "button", (ele) => {
+    const id = ele.currentTarget.getAttribute("data-attr-id");
+    const target = keywordItems.filter(
+      (item) => item.index === parseInt(id)
+    )[0];
+    if (target) {
+      clearInterval(target.interval);
+    }
+    keywordItems = keywordItems.filter((item) => item.index !== parseInt(id));
+    $(`#search-list li[data-attr-id="${id}"]`).remove();
+  });
+  const collapseItem = $(
+    `<div id="collapse-${count}" class="panel collapse" role="tabpanel">`
+  ).appendTo(content);
+  kakaoList.map((item) => {
+    $(`<div class="org-item">
+        <div class="org-name">${item.orgName}</div>
+        <div class="address">${item.address}</div>
+      </div>`).appendTo(collapseItem);
+  });
+};
+var renderKakaoListV2 = (kakaoList) => {
+  const list = $("#search-list ul");
+  list[0].innerHTML = "";
+  kakaoList.map((item) => {
+    $(`<li class="list-v2">
+        <div class="org-name">${item.orgName}</div>
+        <div class="address">${item.address}</div>
+        <div class="loading-position active"></div>
+      </li>`).appendTo(list);
+  });
+};
+var getVaccineKakaoV1 = async (keyword) => {
   let keywordItem = {
     index: count,
     keyword,
     interval: undefined,
   };
+  clearListAll();
+
+  const isUser = await userCheck();
+  if (!isUser) return;
 
   const location = await getCoords(keyword);
-  if (!location) {
-    return;
-  }
+  if (!location) return;
 
-  const leftList = await getLeftCount(location.lng, location.lat, false);
-  if (!leftList.organizations.length) {
-    return;
-  }
+  const leftList = await getLeftCount(location.lng, location.lat, false, true);
+  if (!leftList.length) return;
 
-  const uniqLoading = encodeURIComponent(keyword).replace(/[^A-Z]/g, "");
-  const list = $("#search-list ul");
-  const content = $(`<li data-attr-id="${count}">`).appendTo(list);
-  $(`<a data-toggle="collapse" href="#collapse-${count}">${keyword}<button class="btn-delete hide" data-attr-id="${count}"><i class="icon-trash"></i></button>
-        <div class="loading-position loading-${uniqLoading} active"></div>
-      </a>`).appendTo(content);
-  // content.on("click", "button", (ele) => {
-  //   const id = ele.currentTarget.getAttribute("data-attr-id");
-  //   const target = keywordItems.filter(
-  //     (item) => item.index === parseInt(id)
-  //   )[0];
-  //   if (target) {
-  //     clearInterval(target.interval);
-  //   }
-  //   keywordItems = keywordItems.filter((item) => item.index !== parseInt(id));
-  //   $(`.vaccine-list li[data-attr-id="${id}"]`).remove();
-  // });
-  const collapseItem = $(
-    `<div id="collapse-${count}" class="panel collapse" role="tabpanel">`
-  ).appendTo(content);
-  leftList.organizations.map((item) => {
-    $(`<div class="org-item">
-          <div class="org-name">${item.orgName}</div>
-          <div class="address">${item.address}</div>
-        </div>`).appendTo(collapseItem);
-  });
+  renderKakaoListV1(keyword, leftList);
 
   keywordItem.interval = setInterval(async () => {
     try {
-      const items = await getLeftCount(location.lng, location.lat, false);
-      items.organizations.map(async (item) => {
+      const items = await getLeftCount(location.lng, location.lat, true);
+      items.map(async (item) => {
         if (item.leftCounts) {
           try {
             await updateReservation(item.orgCode);
@@ -93,48 +136,32 @@ var getVaccine = async (keyword) => {
   keywordItems.push(keywordItem);
   count++;
 };
-
-var getVaccine2 = async (keyword) => {
+var getVaccineKakaoV2 = async (keyword) => {
   let keywordItem = {
     index: count,
     keyword,
     interval: undefined,
     leftInterval: undefined,
   };
+  const isUser = await userCheck();
+  if (!isUser) return;
+
   const location = await getCoords(keyword);
-  if (!location) {
-    return;
-  }
-  const leftList = await getLeftCount(location.lng, location.lat, false);
-  if (!leftList.organizations.length) {
-    return;
-  }
-  let filterLeftList = leftList.organizations
-    .filter((item) => item.status !== "CLOSED")
-    .splice(0, 3);
-  const list = $("#search-list ul");
-  filterLeftList.map((item) => {
-    $(`<li class="list-v2">
-        <div class="org-name">${item.orgName}</div>
-        <div class="address">${item.address}</div>
-        <div class="loading-position active"></div>
-        </div>
-      </li>`).appendTo(list);
-  });
+  if (!location) return;
+
+  const leftList = await getLeftCount(location.lng, location.lat, false, true);
+  if (!leftList) return;
+
+  let filterLeftList = leftList.splice(0, 5);
+  renderKakaoListV2(filterLeftList);
+
   keywordItem.leftInterval = setInterval(async () => {
     const leftList = await getLeftCount(location.lng, location.lat, false);
-    filterLeftList = leftList.organizations
-      .filter((item) => item.status !== "CLOSED")
-      .splice(0, 3);
-    const list = $("#search-list ul");
-    list[0].innerHTML = "";
-    filterLeftList.map((item) => {
-      $(`<li class="list-v2">
-            <div class="org-name">${item.orgName}</div>
-            <div class="address">${item.address}</div>
-            <div class="loading-position active"></div>
-          </li>`).appendTo(list);
-    });
+    filterLeftList = leftList.splice(0, 5);
+    if (!filterLeftList.length) {
+      clearListAll("검색지역의 병원이 모두 마감되었습니다.");
+    }
+    renderKakaoListV2(filterLeftList);
   }, 30000);
 
   keywordItem.interval = setInterval(async () => {
@@ -153,7 +180,7 @@ var getVaccine2 = async (keyword) => {
         })
       );
     } catch (e) {}
-  }, 25);
+  }, 40);
   keywordItems.push(keywordItem);
   count++;
 };

@@ -79,7 +79,7 @@ var checkReservation = async (key) => {
     data: JSON.stringify({ key }),
   });
 };
-var gridSearchList = (naverList) => {
+var renderSearchList = (naverList) => {
   const list = $("#search-list ul");
   list[0].innerHTML = "";
   naverList.map((item) => {
@@ -107,10 +107,10 @@ var getVaccineNaver = async (keyword) => {
   if (!naverList || !naverList.length) {
     return;
   }
-  gridSearchList(naverList);
+  renderSearchList(naverList);
   keywordItem.leftInterval = setInterval(async () => {
     naverList = await getNaverList(location);
-    gridSearchList(naverList);
+    renderSearchList(naverList);
   }, 30000);
   keywordItem.interval = setInterval(async () => {
     if (!naverList.length) {
