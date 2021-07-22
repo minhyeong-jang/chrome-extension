@@ -18,12 +18,12 @@ var getLeftCount = async (lng, lat, onlyLeft, initial = false) => {
     );
     if (initial && !filterData.length) {
       showErrorMessage("검색지역의 병원이 모두 마감되었습니다.");
-      return;
+      return [];
     }
     return filterData;
   } catch (e) {
     showErrorMessage("병원리스트 불러오기 오류");
-    return;
+    return [];
   }
 };
 var userCheck = async () => {
@@ -57,7 +57,6 @@ var updateReservation = async (orgCode) => {
   });
 };
 var renderKakaoListV1 = (keyword, kakaoList) => {
-  const uniqLoading = encodeURIComponent(keyword).replace(/[^A-Z]/g, "");
   const list = $("#search-list ul");
   const content = $(`<li data-attr-id="${count}">`).appendTo(list);
   $(`<a data-toggle="collapse" href="#collapse-${count}">${keyword}
@@ -97,12 +96,12 @@ var renderKakaoListV2 = (kakaoList) => {
   });
 };
 var getVaccineKakaoV1 = async (keyword) => {
+  const uniqLoading = encodeURIComponent(keyword).replace(/[^A-Z]/g, "");
   let keywordItem = {
     index: count,
     keyword,
     interval: undefined,
   };
-  clearListAll();
 
   const isUser = await userCheck();
   if (!isUser) return;
@@ -113,7 +112,7 @@ var getVaccineKakaoV1 = async (keyword) => {
   const leftList = await getLeftCount(location.lng, location.lat, false, true);
   if (!leftList.length) return;
 
-  renderKakaoListV1(keyword, leftList);
+  renderKakaoListV1(keyword, uniqLoading, leftList);
 
   keywordItem.interval = setInterval(async () => {
     try {
@@ -137,6 +136,7 @@ var getVaccineKakaoV1 = async (keyword) => {
   count++;
 };
 var getVaccineKakaoV2 = async (keyword) => {
+  clearListAll();
   let keywordItem = {
     index: count,
     keyword,
