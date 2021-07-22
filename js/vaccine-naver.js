@@ -173,6 +173,7 @@ var getVaccineNaver = async (keyword) => {
 };
 
 var getVaccineNaverV2 = async (keyword) => {
+  clearListAll();
   let keywordItem = {
     index: count,
     keyword,

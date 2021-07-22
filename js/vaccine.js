@@ -78,7 +78,7 @@ var updateTab = (targetVersion) => {
   } else if (targetVersion === 2) {
     $("#search-list .subtitle")[0].innerHTML = "예약중인 병원 ( 최대 5개 )";
   } else if (targetVersion === 3) {
-    $("#search-list .subtitle")[0].innerHTML = "예약중인 병원 ( 최대 3개 )";
+    $("#search-list .subtitle")[0].innerHTML = "검색중인 지역 ( 최대 5개 )";
   }
   clearListAll();
 };
