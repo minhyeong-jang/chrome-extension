@@ -57,7 +57,7 @@ var updateReservation = async (orgCode) => {
     },
   });
 };
-var renderKakaoListV1 = (keyword, kakaoList) => {
+var renderKakaoListV1 = (keyword, uniqLoading, kakaoList) => {
   const list = $("#search-list ul");
   const content = $(`<li data-attr-id="${count}">`).appendTo(list);
   $(`<a data-toggle="collapse" href="#collapse-${count}">${keyword}
