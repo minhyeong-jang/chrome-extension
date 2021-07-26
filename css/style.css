@@ -117,19 +117,76 @@ button:hover {
 }
 
 /**
+ * Type
+ */
+#vaccine-type {
+  display: flex;
+  margin: 10px;
+}
+#vaccine-type label {
+  display: flex;
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  color: #131313;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+#vaccine-type input {
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  background: transparent;
+  border: 1px solid #7B4AE8;
+  border-radius: 4px;
+  outline: 0;
+  cursor: pointer;
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+#vaccine-type input::after {
+  position: relative;
+  top: 2px;
+  left: 5px;
+  display: block;
+  width: 4px;
+  height: 7px;
+  border: 1px solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(-270deg) scale(0.5);
+  opacity: 0;
+  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  content: '';
+}
+#vaccine-type input:checked {
+  background-color: #7B4AE8;
+border-color: #7B4AE8;
+  }
+#vaccine-type input:checked::after {
+  transform: rotate(45deg) scale(1);
+  opacity: 1;
+}
+
+/**
  * Search
  */
 .search {
   position: relative;
-  padding: 10px 7px 12px;
+  margin: 10px 7px;
 }
 .search .icon-search {
   position: absolute;
   color: #7b4ae8;
   font-size: 19px;
-  top: calc(50% - 3px);
+  top: 50%;
   transform: translateY(-50%);
-  left: 15px;
+  left: 10px;
   background: none;
 }
 .search input {
@@ -145,78 +202,83 @@ button:hover {
 .search input::placeholder {
   color:#bbb; 
 }
-.search .error-message {
-  position: absolute;
-  bottom: -8px;
-  right: 10px;
-  color: red;
-  font-size: 12px;
-}
 
 /**
  * Search List
  */
-#search-list {}
-#search-list .list-v2 {
-  position: relative;
+#search-list {
+  margin: 10px 7px;
 }
-#search-list .list-v2 .org-name {
-  font-weight: bold;
-}
-#search-list .list-v2 .loading-position {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.content {
-  padding: 15px 7px;
-}
-.content:last-child {
-  border: 0;
-}
-.content .subtitle {
+#search-list .subtitle {
   font-size: 14px;
   font-weight: bold;
   margin: 0 0 5px 0;
-  color: #333;
+  color: #7B4AE8;
 }
-.btn-delete {
-  background: none;
-  margin-left: 3px;
-  border: 0;
-  cursor: pointer;
-  font-size: 14px;
-  color: #5852ff;
+#search-list > div {
+  margin: 20px 0px;
+  position: relative;
 }
-.org-list li {
-  padding: 12px 5px;
+#search-list .error-message {
+  position: absolute;
+  top: 1px;
+  right: 10px;
+  color: red;
+  font-size: 12px;
+}
+#search-list ul {
+  min-height: 30px;
+}
+#search-list ul li {
+  padding: 12px 0px;
   margin: 0 5px;
-  color: #333;
 }
-.org-list li a {
+#search-list ul li a {
   font-size: 14px;
-  font-weight: 500;
+  color: #333;
+  font-weight: bold;
 }
-.org-list li:not(:last-child) {
+#search-list ul li:not(:last-child),
+#search-list ul li .org-item:not(:last-child) {
   border-bottom: 1px solid #dedede;
 }
-.org-list .org-item {
-  padding: 11px 0px;
-  margin: 6px 0;
+#search-list ul li .org-item {
+  margin: 5px 0px;
+  padding: 10px 0px;
 }
-.org-list .org-item:not(:last-child) {
-  border-bottom: 1px solid #dedede;
+#search-list ul li .org-item:last-child {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
 }
-.org-list .org-item .org-name {
+#search-list ul li .org-item .org-name {
   font-size: 13px;
   font-weight: bold;
   margin-bottom: 4px;
 }
-.org-list .org-item .address {
+#search-list ul li .org-item .address {
   font-size: 12px;
 }
+
+
+/**
+ * Success List
+ */
+#success-list {
+  margin: 20px 7px;
+}
+#success-list .subtitle {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  color: #7B4AE8;
+}
+#success-list a {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0px 30px;
+}
+
 
 /**
  * Loading
@@ -225,6 +287,7 @@ button:hover {
   border-radius: 50%;
   width: 17px;
   height: 17px;
+  margin-right: 10px;
   background: #4A84E8;
   border: 1px solid #4A84E8;
   float: right;

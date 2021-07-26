@@ -1,6 +1,6 @@
 var activeVersionTab = 1;
 var keywordItems = [];
-var count = 0;
+var vaccineType = ["pfizer", "moderna"];
 
 var getCoords = async (keyword) => {
   try {
@@ -21,29 +21,30 @@ var getCoords = async (keyword) => {
         location.lng < 124 ||
         location.lng > 132
       ) {
-        showErrorMessage("검색되지 않는 지역입니다.");
+        showErrorMessage("kakao", "검색되지 않는 지역입니다.");
+        showErrorMessage("naver", "검색되지 않는 지역입니다.");
         return;
       }
       return { lat: location.lat, lng: location.lng };
     } else {
-      showErrorMessage("검색되지 않는 지역입니다.");
+      showErrorMessage("kakao", "검색되지 않는 지역입니다.");
+      showErrorMessage("naver", "검색되지 않는 지역입니다.");
     }
     return;
   } catch (e) {
-    showErrorMessage("위치정보 불러오기 오류");
+    showErrorMessage("kakao", "위치정보 불러오기 오류");
+    showErrorMessage("naver", "위치정보 불러오기 오류");
     return;
   }
 };
 var successResult = (url, keyword, orgName) => {
-  const successList = $("#success-list ul");
-  const contentLi = $("<li>").appendTo(successList);
+  const successList = $("#success-list");
   $(`<a href="${url}" target="_blank">
       ${keyword} : ${orgName}
-    </a>`).appendTo(contentLi);
+    </a>`).appendTo(successList);
 
   clearListAll();
 
-  $("#search-list").removeClass("hide");
   $("#success-list").removeClass("hide");
   $(".loading-position").removeClass("active");
   soundManager.onready(() => {
@@ -55,37 +56,37 @@ var successResult = (url, keyword, orgName) => {
     soundManager.play("mySound");
   });
 };
-var showErrorMessage = (message = "") => {
-  $(".error-message")[0].innerHTML = message;
+var showErrorMessage = (type, message = "") => {
+  const typeId = type === "kakao" ? "kakao-list" : "naver-list";
+  $(`#${typeId} .error-message`)[0].innerHTML = message;
 };
-var clearListAll = (message = "") => {
-  $("#search-list ul")[0].innerHTML = "";
-  showErrorMessage(message);
+var clearListAll = () => {
+  showErrorMessage("naver", "");
+  showErrorMessage("kakao", "");
 
   keywordItems.map((item) => {
-    clearInterval(item.leftInterval);
+    item.leftInterval && clearInterval(item.leftInterval);
     clearInterval(item.interval);
   });
-  count = 0;
   keywordItems = [];
 };
-var updateTab = (targetVersion) => {
-  $(".version-wrap button").removeClass("active");
-  $(`.version-wrap button[data-attr-id="${targetVersion}"`).addClass("active");
-  activeVersionTab = targetVersion;
-  if (targetVersion === 1) {
-    $("#search-list .subtitle")[0].innerHTML = "검색중인 지역 ( 최대 5개 )";
-  } else if (targetVersion === 2) {
-    $("#search-list .subtitle")[0].innerHTML = "예약중인 병원 ( 최대 5개 )";
-  } else if (targetVersion === 3) {
-    $("#search-list .subtitle")[0].innerHTML = "검색중인 지역 ( 최대 5개 )";
-  }
-  clearListAll();
-};
+// var updateTab = (targetVersion) => {
+//   $(".version-wrap button").removeClass("active");
+//   $(`.version-wrap button[data-attr-id="${targetVersion}"`).addClass("active");
+//   activeVersionTab = targetVersion;
+//   if (targetVersion === 1) {
+//     $("#search-list .subtitle")[0].innerHTML = "검색중인 지역 ( 최대 5개 )";
+//   } else if (targetVersion === 2) {
+//     $("#search-list .subtitle")[0].innerHTML = "예약중인 병원 ( 최대 5개 )";
+//   } else if (targetVersion === 3) {
+//     $("#search-list .subtitle")[0].innerHTML = "검색중인 지역 ( 최대 5개 )";
+//   }
+//   clearListAll();
+// };
 
-$(document).ready(() => {
-  updateTab(activeVersionTab);
-});
+// $(document).ready(() => {
+//   updateTab(activeVersionTab);
+// });
 $("#position").keypress(function (e) {
   if (e.which == 13) {
     const keyword = $("#position").val();
@@ -93,15 +94,9 @@ $("#position").keypress(function (e) {
     $("#position").val("");
     if (keywordItems.filter((item) => item.keyword === keyword) > 0) return;
     if (keywordItems.length > 4) return;
-    showErrorMessage();
 
-    if (activeVersionTab === 1) {
-      getVaccineKakaoV1(keyword);
-    } else if (activeVersionTab === 2) {
-      getVaccineKakaoV2(keyword);
-    } else if (activeVersionTab === 3) {
-      getVaccineNaver(keyword);
-    }
+    getVaccineKakaoV1(keyword);
+    getVaccineNaverV1(keyword);
   }
 });
 $("button.popup-info").on("click", () => {
@@ -119,10 +114,19 @@ $("button.popup-test").on("click", () => {
     window.open(`https://vaccine.kakao.com/reservation/123`, "_blank");
   }
 });
-$(".version-wrap button").on("click", (event) => {
-  const targetVersion = parseInt($(event.target).attr("data-attr-id"));
-  if (targetVersion === activeVersionTab) {
-    return;
+// $(".version-wrap button").on("click", (event) => {
+//   const targetVersion = parseInt($(event.target).attr("data-attr-id"));
+//   if (targetVersion === activeVersionTab) {
+//     return;
+//   }
+//   updateTab(targetVersion);
+// });
+$("#vaccine-type input").on("change", (event) => {
+  const value = event.currentTarget.value;
+  const index = vaccineType.indexOf(value);
+  if (index === -1) {
+    vaccineType.push(value);
+  } else {
+    vaccineType.splice(index, 1);
   }
-  updateTab(targetVersion);
 });

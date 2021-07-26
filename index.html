@@ -7,24 +7,39 @@
   </head>
   <body>
     <div class="container">
-      <div class="banner"><div class="version">v1.3.4</div></div>
-      <div class="version-wrap">
-        <button class="active" data-attr-id="1">Kakao V1</button>
-        <button data-attr-id="2">Kakao V2</button>
-        <button data-attr-id="3">Naver</button>
+      <div class="banner"><div class="version">v1.4.0</div></div>
+      <div id="vaccine-type">
+        <div>
+          <label>
+            <input type="checkbox" name="pfizer" value="pfizer" checked />
+            화이자
+          </label>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="moderna" value="moderna" checked />
+            모더나
+          </label>
+        </div>
       </div>
       <div class="search">
         <i class="icon-search"></i>
         <input id="position" placeholder="장소, 지하철역, 공원 등" />
-        <div class="error-message"></div>
       </div>
-      <div id="success-list" class="content hide">
-        <h3 class="subtitle">접종 예약 병원</h3>
-        <ul class="org-list"></ul>
+      <div id="success-list" class="hide">
+        <h3 class="subtitle">접종 예약</h3>
       </div>
-      <div id="search-list" class="content">
-        <h3 class="subtitle">검색중인 지역 ( 최대 5개 )</h3>
-        <ul class="org-list"></ul>
+      <div id="search-list">
+        <div id="kakao-list">
+          <div class="subtitle">Kakao</div>
+          <div class="error-message"></div>
+          <ul></ul>
+        </div>
+        <div id="naver-list">
+          <div class="subtitle">Naver (Beta)</div>
+          <div class="error-message"></div>
+          <ul></ul>
+        </div>
       </div>
     </div>
     <div class="infomation">

@@ -1,4 +1,4 @@
-var getNaverList = async (location) => {
+var getNaverList = async (location, initial = false) => {
   try {
     const res = await lib.ajaxSubmit({
       url: "https://api.place.naver.com/graphql",
@@ -32,26 +32,32 @@ var getNaverList = async (location) => {
       ]),
     });
     const items = res[0].data.rests.businesses.items;
-    const sortedItems = items.sort((a, b) => {
-      let aDistance = parseFloat(a.distance);
-      let bDistance = parseFloat(b.distance);
-      if (a.distance.match(/\dm/)) {
-        aDistance = parseFloat(a.distance) / 1000;
-      }
-      if (b.distance.match(/\dm/)) {
-        bDistance = parseFloat(b.distance) / 1000;
-      }
-      return aDistance - bDistance;
-    });
-    return sortedItems.filter(
-      (item) =>
-        parseFloat(item.distance) <= 3 &&
-        item.vaccineQuantity &&
-        item.vaccineQuantity.totalQuantityStatus !== "empty" &&
-        item.vaccineQuantity.totalQuantityStatus !== "closed"
-    );
+    const sortedItems = items
+      .sort((a, b) => {
+        let aDistance = parseFloat(a.distance);
+        let bDistance = parseFloat(b.distance);
+        if (a.distance.match(/\dm/)) {
+          aDistance = parseFloat(a.distance) / 1000;
+        }
+        if (b.distance.match(/\dm/)) {
+          bDistance = parseFloat(b.distance) / 1000;
+        }
+        return aDistance - bDistance;
+      })
+      .filter(
+        (item) =>
+          parseFloat(item.distance) <= 4 &&
+          item.vaccineQuantity &&
+          item.vaccineQuantity.totalQuantityStatus !== "empty" &&
+          item.vaccineQuantity.totalQuantityStatus !== "closed"
+      );
+    if (!sortedItems.length && initial) {
+      showErrorMessage("naver", "검색지역의 병원이 모두 마감되었습니다.");
+      return [];
+    }
+    return sortedItems;
   } catch (e) {
-    showErrorMessage("병원리스트 불러오기 오류");
+    // showErrorMessage("naver", "병원리스트 불러오기 오류");
     return [];
   }
 };
@@ -78,25 +84,13 @@ var checkReservation = async (key) => {
   });
 };
 var renderNaverListV1 = (keyword, uniqLoading, naverList) => {
-  const list = $("#search-list ul");
-  const content = $(`<li data-attr-id="${count}">`).appendTo(list);
-  $(`<a data-toggle="collapse" href="#collapse-${count}">${keyword}
-      <button class="btn-delete" data-attr-id="${count}"><i class="icon-trash"></i></button>
+  const list = $("#naver-list ul");
+  const content = $(`<li>`).appendTo(list);
+  $(`<a data-toggle="collapse" href="#collapse-naver-${uniqLoading}">${keyword}
       <div class="loading-position loading-${uniqLoading} active"></div>
     </a>`).appendTo(content);
-  content.on("click", "button", (ele) => {
-    const id = ele.currentTarget.getAttribute("data-attr-id");
-    const target = keywordItems.filter(
-      (item) => item.index === parseInt(id)
-    )[0];
-    if (target) {
-      clearInterval(target.interval);
-    }
-    keywordItems = keywordItems.filter((item) => item.index !== parseInt(id));
-    $(`#search-list li[data-attr-id="${id}"]`).remove();
-  });
   const collapseItem = $(
-    `<div id="collapse-${count}" class="panel collapse" role="tabpanel">`
+    `<div id="collapse-naver-${uniqLoading}" class="panel collapse" role="tabpanel">`
   ).appendTo(content);
   naverList.map((item) => {
     $(`<div class="org-item">
@@ -105,32 +99,21 @@ var renderNaverListV1 = (keyword, uniqLoading, naverList) => {
       </div>`).appendTo(collapseItem);
   });
 };
-var renderNaverListV2 = (naverList) => {
-  const list = $("#search-list ul");
-  list[0].innerHTML = "";
-  naverList.map((item) => {
-    $(`<li class="list-v2">
-        <div class="org-name">${item.name}</div>
-        <div class="address">${item.roadAddress}</div>
-        <div class="loading-position active"></div>
-        </div>
-      </li>`).appendTo(list);
-  });
-};
 
-var getVaccineNaver = async (keyword) => {
-  const uniqLoading = encodeURIComponent(keyword).replace(/[^A-Z]/g, "");
+var getVaccineNaverV1 = async (keyword) => {
+  const uniqLoading = encodeURIComponent(`NAVER-${keyword}`).replace(
+    /[^A-Z]/g,
+    ""
+  );
   let keywordItem = {
-    index: count,
     keyword,
     interval: undefined,
-    leftInterval: undefined,
   };
 
   const location = await getCoords(keyword);
   if (!location) return;
 
-  const naverList = await getNaverList(location);
+  const naverList = await getNaverList(location, true);
   if (!naverList.length) return;
 
   const userCheck = await getReservationKey(
@@ -138,7 +121,7 @@ var getVaccineNaver = async (keyword) => {
     naverList[0].id
   );
   if (!userCheck) {
-    showErrorMessage("네이버 로그인/인증서 오류");
+    showErrorMessage("naver", "네이버 로그인/인증서 오류");
     return;
   }
   renderNaverListV1(keyword, uniqLoading, naverList);
@@ -153,7 +136,7 @@ var getVaccineNaver = async (keyword) => {
             item.id
           );
           if (!code) {
-            showErrorMessage("코드발급 오류");
+            // showErrorMessage("naver", "코드발급 오류");
             return;
           }
           const res = await checkReservation(code);
@@ -168,81 +151,93 @@ var getVaccineNaver = async (keyword) => {
       } catch (e) {}
     });
     $(`.loading-${uniqLoading}`).toggleClass("active");
-  }, 700);
+  }, 800);
   keywordItems.push(keywordItem);
 };
 
-var getVaccineNaverV2 = async (keyword) => {
-  clearListAll();
-  let keywordItem = {
-    index: count,
-    keyword,
-    interval: undefined,
-    leftInterval: undefined,
-  };
+// var renderNaverListV2 = (naverList) => {
+//   const list = $("#search-list ul");
+//   list[0].innerHTML = "";
+//   naverList.map((item) => {
+//     $(`<li class="list-v2">
+//         <div class="org-name">${item.name}</div>
+//         <div class="address">${item.roadAddress}</div>
+//         <div class="loading-position active"></div>
+//         </div>
+//       </li>`).appendTo(list);
+//   });
+// };
+// var getVaccineNaverV2 = async (keyword) => {
+//   clearListAll();
+//   let keywordItem = {
+//     index: count,
+//     keyword,
+//     interval: undefined,
+//     leftInterval: undefined,
+//   };
 
-  const location = await getCoords(keyword);
-  if (!location) return;
+//   const location = await getCoords(keyword);
+//   if (!location) return;
 
-  const naverList = await getNaverList(location);
-  if (!naverList.length) {
-    showErrorMessage("검색지역의 병원이 모두 마감되었습니다.");
-    return;
-  }
-  let filterNaverList = naverList.splice(0, 3);
+//   const naverList = await getNaverList(location);
+//   if (!naverList.length) {
+//     showErrorMessage("naver", "검색지역의 병원이 모두 마감되었습니다.");
+//     return;
+//   }
+//   let filterNaverList = naverList.splice(0, 3);
 
-  const userCheck = await getReservationKey(
-    naverList[0].vaccineQuantity.vaccineOrganizationCode,
-    naverList[0].id
-  );
-  if (!userCheck) {
-    showErrorMessage("네이버 로그인/인증서 오류");
-    return;
-  }
+//   const userCheck = await getReservationKey(
+//     naverList[0].vaccineQuantity.vaccineOrganizationCode,
+//     naverList[0].id
+//   );
+//   if (!userCheck) {
+//     showErrorMessage("naver", "네이버 로그인/인증서 오류");
+//     return;
+//   }
 
-  renderNaverListV2(naverList);
-  keywordItem.leftInterval = setInterval(async () => {
-    const naverList = await getNaverList(location);
-    if (!naverList.length) {
-      clearListAll("검색지역의 병원이 모두 마감되었습니다.");
-    }
-    filterNaverList = naverList.splice(0, 3);
-    renderNaverListV2(naverList);
-  }, 30000);
-  keywordItem.interval = setInterval(async () => {
-    $(`.loading-position`).toggleClass("active");
+//   renderNaverListV2(naverList);
+//   keywordItem.leftInterval = setInterval(async () => {
+//     const naverList = await getNaverList(location);
+//     if (!naverList.length) {
+//       clearListAll("검색지역의 병원이 모두 마감되었습니다.");
+//     }
+//     filterNaverList = naverList.splice(0, 3);
+//     renderNaverListV2(naverList);
+//   }, 30000);
+//   keywordItem.interval = setInterval(async () => {
+//     $(`.loading-position`).toggleClass("active");
 
-    const reservatonList = await Promise.all(
-      naverList.map(async (item) => ({
-        code: await getReservationKey(
-          item.vaccineQuantity.vaccineOrganizationCode,
-          item.id
-        ),
-        orgName: item.name,
-      }))
-    );
-    const filterReservationList = reservatonList.filter(
-      (reservation) => reservation.code
-    );
-    if (!filterReservationList.length) {
-      $(".error-message")[0].innerHTML = "병원 정보 불러오기 오류";
-      return;
-    }
-    Promise.all(
-      filterReservationList.map(async (reservation) => {
-        try {
-          const res = await checkReservation(reservation.code);
-          if (toUpperCase(res.code) === "SUCCESS") {
-            successResult(
-              `https://v-search.nid.naver.com/reservation/success?key=${reservation.code}`,
-              keyword,
-              reservation.orgName
-            );
-          }
-        } catch (e) {}
-      })
-    );
-    $(".error-message")[0].innerHTML = "";
-  }, 300);
-  keywordItems.push(keywordItem);
-};
+//     const reservatonList = await Promise.all(
+//       naverList.map(async (item) => ({
+//         code: await getReservationKey(
+//           item.vaccineQuantity.vaccineOrganizationCode,
+//           item.id
+//         ),
+//         orgName: item.name,
+//       }))
+//     );
+//     const filterReservationList = reservatonList.filter(
+//       (reservation) => reservation.code
+//     );
+//     if (!filterReservationList.length) {
+//       $(".error-message")[0].innerHTML = "병원 정보 불러오기 오류";
+//       return;
+//     }
+//     Promise.all(
+//       filterReservationList.map(async (reservation) => {
+//         try {
+//           const res = await checkReservation(reservation.code);
+//           if (toUpperCase(res.code) === "SUCCESS") {
+//             successResult(
+//               `https://v-search.nid.naver.com/reservation/success?key=${reservation.code}`,
+//               keyword,
+//               reservation.orgName
+//             );
+//           }
+//         } catch (e) {}
+//       })
+//     );
+//     $(".error-message")[0].innerHTML = "";
+//   }, 300);
+//   keywordItems.push(keywordItem);
+// };
