@@ -1,5 +1,6 @@
 var activeVersionTab = 1;
 var keywordItems = [];
+var isSuccess = false;
 var vaccineType = ["pfizer", "moderna"];
 
 var getCoords = async (keyword) => {
@@ -43,7 +44,10 @@ var successResult = (url, keyword, orgName) => {
       ${keyword} : ${orgName}
     </a>`).appendTo(successList);
 
-  clearListAll();
+  showErrorMessage("naver", "");
+  showErrorMessage("kakao", "");
+
+  isSuccess = true;
 
   $("#success-list").removeClass("hide");
   $(".loading-position").removeClass("active");
@@ -60,40 +64,20 @@ var showErrorMessage = (type, message = "") => {
   const typeId = type === "kakao" ? "kakao-list" : "naver-list";
   $(`#${typeId} .error-message`)[0].innerHTML = message;
 };
-var clearListAll = () => {
-  showErrorMessage("naver", "");
-  showErrorMessage("kakao", "");
-
-  keywordItems.map((item) => {
-    item.leftInterval && clearInterval(item.leftInterval);
-    clearInterval(item.interval);
-  });
-  keywordItems = [];
+var setCallTime = (type, time) => {
+  const typeId = type === "kakao" ? "kakao-list" : "naver-list";
+  $(`#${typeId} .call-time`)[0].innerHTML = `${(
+    time / 1000
+  ).toLocaleString()}sec`;
 };
-// var updateTab = (targetVersion) => {
-//   $(".version-wrap button").removeClass("active");
-//   $(`.version-wrap button[data-attr-id="${targetVersion}"`).addClass("active");
-//   activeVersionTab = targetVersion;
-//   if (targetVersion === 1) {
-//     $("#search-list .subtitle")[0].innerHTML = "검색중인 지역 ( 최대 5개 )";
-//   } else if (targetVersion === 2) {
-//     $("#search-list .subtitle")[0].innerHTML = "예약중인 병원 ( 최대 5개 )";
-//   } else if (targetVersion === 3) {
-//     $("#search-list .subtitle")[0].innerHTML = "검색중인 지역 ( 최대 5개 )";
-//   }
-//   clearListAll();
-// };
 
-// $(document).ready(() => {
-//   updateTab(activeVersionTab);
-// });
 $("#position").keypress(function (e) {
   if (e.which == 13) {
     const keyword = $("#position").val();
     if (keyword === "") return;
     $("#position").val("");
     if (keywordItems.filter((item) => item.keyword === keyword) > 0) return;
-    if (keywordItems.length > 4) return;
+    if (keywordItems.length > 3) return;
 
     getVaccineKakaoV1(keyword);
     getVaccineNaverV1(keyword);
@@ -114,13 +98,6 @@ $("button.popup-test").on("click", () => {
     window.open(`https://vaccine.kakao.com/reservation/123`, "_blank");
   }
 });
-// $(".version-wrap button").on("click", (event) => {
-//   const targetVersion = parseInt($(event.target).attr("data-attr-id"));
-//   if (targetVersion === activeVersionTab) {
-//     return;
-//   }
-//   updateTab(targetVersion);
-// });
 $("#vaccine-type input").on("change", (event) => {
   const value = event.currentTarget.value;
   const index = vaccineType.indexOf(value);

@@ -1,5 +1,9 @@
+let naverResTime = 750;
+let isRun = false;
+
 var getNaverList = async (location, initial = false) => {
   try {
+    const startTime = new Date().getTime();
     const res = await lib.ajaxSubmit({
       url: "https://api.place.naver.com/graphql",
       type: "POST",
@@ -31,6 +35,8 @@ var getNaverList = async (location, initial = false) => {
         },
       ]),
     });
+    naverResTime = new Date().getTime() - startTime;
+    setCallTime("naver", naverResTime);
     const items = res[0].data.rests.businesses.items;
     const sortedItems = items
       .sort((a, b) => {
@@ -46,7 +52,7 @@ var getNaverList = async (location, initial = false) => {
       })
       .filter(
         (item) =>
-          parseFloat(item.distance) <= 4 &&
+          parseFloat(item.distance) <= 5 &&
           item.vaccineQuantity &&
           item.vaccineQuantity.totalQuantityStatus !== "empty" &&
           item.vaccineQuantity.totalQuantityStatus !== "closed"
@@ -55,9 +61,10 @@ var getNaverList = async (location, initial = false) => {
       showErrorMessage("naver", "검색지역의 병원이 모두 마감되었습니다.");
       return [];
     }
+    showErrorMessage("naver", "");
     return sortedItems;
   } catch (e) {
-    // showErrorMessage("naver", "병원리스트 불러오기 오류");
+    showErrorMessage("naver", "질병관리청 네트워크 문제 발생");
     return [];
   }
 };
@@ -101,14 +108,12 @@ var renderNaverListV1 = (keyword, uniqLoading, naverList) => {
 };
 
 var getVaccineNaverV1 = async (keyword) => {
+  if (isRun) return;
+
   const uniqLoading = encodeURIComponent(`NAVER-${keyword}`).replace(
     /[^A-Z]/g,
     ""
   );
-  let keywordItem = {
-    keyword,
-    interval: undefined,
-  };
 
   const location = await getCoords(keyword);
   if (!location) return;
@@ -126,10 +131,10 @@ var getVaccineNaverV1 = async (keyword) => {
   }
   renderNaverListV1(keyword, uniqLoading, naverList);
 
-  keywordItem.interval = setInterval(async () => {
+  const vaccineRequest = async () => {
     const naverList = await getNaverList(location);
-    naverList.map(async (item) => {
-      try {
+    try {
+      naverList.map(async (item) => {
         if (item.vaccineQuantity.totalQuantity) {
           const code = await getReservationKey(
             item.vaccineQuantity.vaccineOrganizationCode,
@@ -148,11 +153,17 @@ var getVaccineNaverV1 = async (keyword) => {
             );
           }
         }
-      } catch (e) {}
-    });
-    $(`.loading-${uniqLoading}`).toggleClass("active");
-  }, 800);
-  keywordItems.push(keywordItem);
+      });
+      $(`.loading-${uniqLoading}`).toggleClass("active");
+    } catch (e) {}
+
+    setTimeout(
+      () => !isSuccess && vaccineRequest(),
+      naverResTime * 0.5 > 750 ? naverResTime * 0.5 : 750
+    );
+  };
+  vaccineRequest();
+  isRun = true;
 };
 
 // var renderNaverListV2 = (naverList) => {

@@ -7,20 +7,16 @@
   </head>
   <body>
     <div class="container">
-      <div class="banner"><div class="version">v1.4.0</div></div>
+      <div class="banner"><div class="version">v1.4.1</div></div>
       <div id="vaccine-type">
-        <div>
-          <label>
-            <input type="checkbox" name="pfizer" value="pfizer" checked />
-            화이자
-          </label>
-        </div>
-        <div>
-          <label>
-            <input type="checkbox" name="moderna" value="moderna" checked />
-            모더나
-          </label>
-        </div>
+        <label>
+          <input type="checkbox" name="pfizer" value="pfizer" checked />
+          화이자
+        </label>
+        <label>
+          <input type="checkbox" name="moderna" value="moderna" checked />
+          모더나
+        </label>
       </div>
       <div class="search">
         <i class="icon-search"></i>
@@ -31,12 +27,22 @@
       </div>
       <div id="search-list">
         <div id="kakao-list">
-          <div class="subtitle">Kakao</div>
+          <div class="subtitle">
+            <!-- <label> -->
+            <!-- <input type="checkbox" name="kakao" value="kakao" checked /> -->
+            Kakao <span class="call-time"></span>
+            <!-- </label> -->
+          </div>
           <div class="error-message"></div>
           <ul></ul>
         </div>
         <div id="naver-list">
-          <div class="subtitle">Naver (Beta)</div>
+          <div class="subtitle">
+            <!-- <label> -->
+            <!-- <input type="checkbox" name="naver" value="naver" checked /> -->
+            Naver (Beta) <span class="call-time"></span>
+            <!-- </label> -->
+          </div>
           <div class="error-message"></div>
           <ul></ul>
         </div>

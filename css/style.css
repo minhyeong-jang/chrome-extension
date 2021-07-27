@@ -34,6 +34,56 @@ button:hover {
 .hide {
   display: none;
 }
+label {
+  display: flex;
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  color: #131313;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+input[type="checkbox"] {
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  background: transparent;
+  border: 1px solid #7B4AE8;
+  border-radius: 4px;
+  outline: 0;
+  cursor: pointer;
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+input::after {
+  position: relative;
+  top: 2px;
+  left: 5px;
+  display: block;
+  width: 4px;
+  height: 7px;
+  border: 1px solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(-270deg) scale(0.5);
+  opacity: 0;
+  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  content: '';
+}
+input:checked {
+  background-color: #7B4AE8;
+border-color: #7B4AE8;
+  }
+input:checked::after {
+  transform: rotate(45deg) scale(1);
+  opacity: 1;
+}
+
 .container {
   max-height: 550px;
   min-height: 550px;
@@ -121,56 +171,7 @@ button:hover {
  */
 #vaccine-type {
   display: flex;
-  margin: 10px;
-}
-#vaccine-type label {
-  display: flex;
-  display: inline-flex;
-  align-items: center;
-  height: 22px;
-  color: #131313;
-  font-size: 13px;
-  cursor: pointer;
-  margin-right: 20px;
-}
-#vaccine-type input {
-  box-sizing: border-box;
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
-  background: transparent;
-  border: 1px solid #7B4AE8;
-  border-radius: 4px;
-  outline: 0;
-  cursor: pointer;
-  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-#vaccine-type input::after {
-  position: relative;
-  top: 2px;
-  left: 5px;
-  display: block;
-  width: 4px;
-  height: 7px;
-  border: 1px solid #fff;
-  border-width: 0 2px 2px 0;
-  transform: rotate(-270deg) scale(0.5);
-  opacity: 0;
-  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  content: '';
-}
-#vaccine-type input:checked {
-  background-color: #7B4AE8;
-border-color: #7B4AE8;
-  }
-#vaccine-type input:checked::after {
-  transform: rotate(45deg) scale(1);
-  opacity: 1;
+  margin: 10px 7px;
 }
 
 /**
@@ -218,6 +219,11 @@ border-color: #7B4AE8;
 #search-list > div {
   margin: 20px 0px;
   position: relative;
+}
+#search-list .call-time {
+  color: #666;
+  font-size: 12px;
+  margin-left: 5px;
 }
 #search-list .error-message {
   position: absolute;
@@ -328,4 +334,5 @@ tbody.collapse.in {
   -webkit-transition-property: height, visibility;
   -o-transition-property: height, visibility;
   transition-property: height, visibility;
+}
 }

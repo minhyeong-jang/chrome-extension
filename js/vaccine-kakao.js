@@ -1,3 +1,5 @@
+let kakaoResTime = 125;
+
 const kakaoCode = {
   /** 화이자 */
   pfizer: "VEN00013",
@@ -19,19 +21,22 @@ const kakaoCode = {
 
 var getLeftCount = async (lng, lat, onlyLeft, initial = false) => {
   try {
+    const startTime = new Date().getTime();
     const res = await lib.ajaxSubmit({
       url: "https://vaccine.kakao.com/api/v2/vaccine/left_count_by_coords",
       type: "POST",
       data: JSON.stringify({
-        bottomRight: { x: lng - 0.02, y: lat + 0.03 },
+        bottomRight: { x: lng - 0.01, y: lat + 0.02 },
         onlyLeft,
         order: "latitude",
-        topLeft: { x: lng + 0.02, y: lat - 0.03 },
+        topLeft: { x: lng + 0.01, y: lat - 0.02 },
       }),
       beforeSend: (xhr) => {
         xhr.setRequestHeader("Content-type", "application/json");
       },
     });
+    kakaoResTime = new Date().getTime() - startTime;
+    setCallTime("kakao", kakaoResTime);
     const filterData = res.organizations.filter(
       (item) => item.status !== "CLOSED"
     );
@@ -39,10 +44,10 @@ var getLeftCount = async (lng, lat, onlyLeft, initial = false) => {
       showErrorMessage("kakao", "검색지역의 병원이 모두 마감되었습니다.");
       return [];
     }
-    // showErrorMessage("kakao", "");
+    showErrorMessage("kakao", "");
     return filterData;
   } catch (e) {
-    // showErrorMessage("kakao", "병원리스트 불러오기 오류");
+    showErrorMessage("kakao", "질병관리청 네트워크 문제 발생");
     return [];
   }
 };
@@ -110,7 +115,7 @@ var getVaccineKakaoV1 = async (keyword) => {
 
   renderKakaoListV1(keyword, uniqLoading, leftList);
 
-  keywordItem.interval = setInterval(async () => {
+  const vaccineRequest = async () => {
     try {
       const items = await getLeftCount(location.lng, location.lat, true);
       items.map((item) => {
@@ -131,7 +136,13 @@ var getVaccineKakaoV1 = async (keyword) => {
       });
       $(`.loading-${uniqLoading}`).toggleClass("active");
     } catch (e) {}
-  }, 80);
+
+    setTimeout(
+      () => !isSuccess && vaccineRequest(),
+      kakaoResTime * 0.5 > 125 ? kakaoResTime * 0.5 : 125
+    );
+  };
+  vaccineRequest();
   keywordItems.push(keywordItem);
 };
 
